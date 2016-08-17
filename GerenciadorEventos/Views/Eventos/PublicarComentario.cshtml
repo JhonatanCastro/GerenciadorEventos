@@ -1,0 +1,48 @@
+﻿@model List<GerenciadorEventos.Entidades.Comentario>
+@{
+    Layout = "";
+
+    GerenciadorEventos.Entidades.Usuario usuario = new GerenciadorEventos.Entidades.Usuario();
+    if (Session["usuario"] != null)
+    {
+        usuario = (GerenciadorEventos.Entidades.Usuario)Session["usuario"];
+    }
+
+    List<GerenciadorEventos.Entidades.Usuario> palestrantes = new List<GerenciadorEventos.Entidades.Usuario>();
+    palestrantes = ViewBag.Palestrantes;
+
+    GerenciadorEventos.Entidades.Usuario organizador = new GerenciadorEventos.Entidades.Usuario();
+    organizador = ViewBag.Organizador;
+}
+
+@if (Model.Count > 0)
+{
+    foreach (GerenciadorEventos.Entidades.Comentario comentario in Model.OrderBy(m => m.data))
+    {
+        <div class="row" id="@comentario.codigo">
+            <div class="col-md-12">
+                <span style="color:#3276b1">
+                    @comentario.usuario.nome @if (palestrantes.Where(m => m.codigo == comentario.usuario.codigo).ToList().Count > 0 ) { <span> - @comentario.usuario.nivelAcesso.nivelAcesso</span> } @if (organizador.codigo == comentario.usuario.codigo) { if (comentario.usuario.nivelAcesso.codigo != 4) { <span> - @comentario.usuario.nivelAcesso.nivelAcesso</span> } else { <span> - Organizador</span> }  } - @string.Format("{0:g}", comentario.data)
+                </span>
+                @if (comentario.usuario.codigo == usuario.codigo || comentario.evento.organizador.codigo == usuario.codigo || usuario.nivelAcesso.codigo == 4)
+                {
+                    <span style="margin-top: 5px;float: right;color:#3276b1; font-size:10px; cursor: pointer;" onclick="RemoverComentario(@comentario.codigo, @comentario.evento.codigo);">
+                        Remover
+                    </span>
+                }
+                <div class="_30o4">
+                    <span class="_5mdd">
+                        <span>@comentario.comentario</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <br />
+    }
+}
+
+<script>
+    $(document).ready(function () {
+        $("#NumeroComentarios").html("@ViewBag.NumeroComentario"+" Comentários");
+    });
+</script>

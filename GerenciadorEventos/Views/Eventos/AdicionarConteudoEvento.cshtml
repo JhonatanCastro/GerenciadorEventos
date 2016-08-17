@@ -1,0 +1,36 @@
+﻿@model GerenciadorEventos.Entidades.Evento
+@{
+    ViewBag.Title = "Adicionar Conteúdo no Evento";
+}
+
+<h2>Adicionar Conteúdo no Evento - @Model.nome</h2>
+
+<div id="divConteudo">
+    @Html.Action("ExibirConteudoEvento", "Eventos", new { CodigoEvento = Model.codigo })
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <button class="btn btn-primary" onclick="ModalConteudoEvento(@Model.codigo)">Adicionar Conteúdo</button>
+    </div>
+</div>
+
+<script>
+    function ModalConteudoEvento(CodigoEvento)
+    {
+        $.ajax({
+            url: "@Url.Action("ModalConteudoPalestrante", "Eventos")",
+            data: { "CodigoEvento": CodigoEvento },
+            dataType: "html",
+            beforeSend: function () {
+                AjaxBegin();
+            },
+            complete: function () {
+                AjaxComplete();
+            },
+            success: function (data) {
+                $("#divModal").html(data);
+            }
+        });
+    }
+</script>

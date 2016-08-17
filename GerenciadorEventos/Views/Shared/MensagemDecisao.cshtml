@@ -1,0 +1,50 @@
+﻿@{
+    string cor = "color:white";
+    string resultado = "";
+    if (@ViewBag.Tipo == 1)
+    {
+        resultado = "success";
+    }
+    else if (@ViewBag.Tipo == 2)
+    {
+        resultado = "warning";
+    }
+    else if (@ViewBag.Tipo == 3)
+    {
+        resultado = "primary";
+    }
+    else if (@ViewBag.Tipo == 0)
+    {
+        resultado = "danger";
+        cor = "color:#a94442";
+    }
+    else
+    {
+        resultado = "default";
+    }
+}
+
+<div class="modal fade danger" id="dvModalMensagemDecisao">
+    <div class="modal-dialog danger">
+        <div class="panel panel-danger">
+            <div class="panel-heading">
+                <h4 class="modal-title" style="color:#a94442;">@ViewBag.Titulo</h4>
+            </div>
+            <div class="panel-body">
+                <p>@ViewBag.Mensagem</p>
+            </div>
+            <div class="panel-footer" style="text-align:right;">
+                <button type="button" class="btn btn-danger" data-dismiss="modal" id="btnSim">Sim</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal" id="btnNao">Não</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script>
+    $(document).keyup(function (e) {
+        if (e.keyCode == 27) {
+            $("#dvModalMensagemDecisao").modal('hide');
+        }
+    });
+</script>

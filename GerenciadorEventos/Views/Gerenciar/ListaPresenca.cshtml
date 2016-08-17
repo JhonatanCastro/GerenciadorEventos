@@ -1,0 +1,92 @@
+﻿@model GerenciadorEventos.Entidades.ViewToPdf
+@{
+    Layout = "";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    @*<meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">*@
+    <title>Gerenciador de Eventos</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jquerymask")
+    @Scripts.Render("~/bundles/script")
+
+    <style>
+        table {
+            border-bottom: 1px solid #111;
+        }
+        thead th, thead td {
+            padding: 10px 18px;
+            border-bottom: 1px solid #111;
+        }
+        table.table-bordered tbody th, table.table-bordered tbody td {
+            border-bottom-width: 0;
+        }
+        table.table-bordered th, table.table-bordered td {
+            border-left-width: 0;
+        }
+        th, td {
+            padding: 8px 10px;
+        }
+        table {
+            max-width: 100%;
+        }
+
+        table {
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+        .table-bordered {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container body-content">
+        <div class="row">
+            <div class="col-xs-12" style="text-align:center;">
+                <span style="font-size:20px;"><b>Nome do Evento: </b>@Model.evento.nome</span>
+            </div>
+        </div>
+        <br/>
+        <div class="row">
+            <div class="col-xs-12">
+                <table id="tbInscritos" class="table table-hover table-bordered" width="100%">
+                    <thead>
+                        <tr>
+                            <th width="30%">Nome</th>
+                            <th width="23%">Data Inscrição</th>
+                            <th width="12%">Status</th>
+                            <th width="35%">Assinatura</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (GerenciadorEventos.Entidades.Usuario inscrito in Model.lstUsuario.OrderBy(m => m.nome))
+                        {
+                            <tr>
+                                <td>@inscrito.nome</td>
+                                <td>@inscrito.dataCadastro</td>
+                                <td>@inscrito.statusInscricao</td>
+                                <td></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+

@@ -1,0 +1,103 @@
+﻿@model List<GerenciadorEventos.Entidades.Evento>
+@{
+    ViewBag.Title = "GerenciarConteudo";
+}
+
+<h2>Gerenciamento de Conteúdo - Palestrante</h2>
+
+<div class="row">
+    <div class="col-md-12">
+        <table id="tbEventos" class="table table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th>Ação</th>
+                    <th>Nome do Evento</th>
+                    <th>Data Evento</th>
+                    <th>Inscritos</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (GerenciadorEventos.Entidades.Evento evento in Model)
+                {
+                    <tr>
+                        <td>
+                            <a href="@Url.Action("VisualizarEvento", "Eventos", new { CodigoEvento = evento.codigo})" data-toggle="tooltip" data-placement="top" title="Visualizar Evento">
+                                <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                            </a>
+                            @if (evento.ativo == 'A' && evento.dataHoraFim >= DateTime.Now)
+                            {
+                                <a href="@Url.Action("AdicionarConteudoEvento", "Eventos", new { CodigoEvento = evento.codigo })" data-toggle="tooltip" data-placement="top" title="Adicionar Conteúdo">
+                                    <span class="glyphicon glyphicon-edit" aria-hidden="true" style="color:green;"></span>
+                                </a>
+                            }
+                        </td>
+                        <td>@evento.nome</td>
+                        <td>@evento.dataHoraInicio - @evento.dataHoraFim</td>
+                        <td>@evento.inscritos</td>
+                        <td>
+                            @if (evento.ativo == 'I')
+                            {
+                                @:Cancelado
+                            }
+                            else if (evento.dataHoraInicio <= DateTime.Now && evento.dataHoraFim <= DateTime.Now)
+                            {
+                                @:Finalizado
+                            }
+                            else if (evento.dataHoraInicio <= DateTime.Now && evento.dataHoraFim >= DateTime.Now)
+                            {
+                                @:Em Andamento
+                            }
+                            else if (evento.dataHoraInicioInscricao <= DateTime.Now && evento.dataHoraFimInscricao <= DateTime.Now)
+                            {
+                                @:Fim do Período de Inscrições
+                            }
+                            else if (evento.dataHoraInicioInscricao <= DateTime.Now && evento.dataHoraFimInscricao >= DateTime.Now)
+                            {
+                                @:Inscrições em Andamento
+                            }
+                            else
+                            {
+                                @:Aguardando Período de Inscrições
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#tbEventos').DataTable(
+            {
+                "language": {
+                    "decimal": "",
+                    "emptyTable": "Não há dados disponiveis na tabela",
+                    "info": "Mostrando _START_ de _END_ da(s) _TOTAL_ entradas",
+                    "infoEmpty": "Mostrando 0 de 0 das 0 entradas",
+                    "infoFiltered": "(filtrando para _MAX_ total entradas)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Visualizar _MENU_ linhas",
+                    "loadingRecords": "Carregando...",
+                    "processing": "Processando...",
+                    "search": "Procurar:",
+                    "zeroRecords": "Não há registros encontrados",
+                    "paginate": {
+                        "first": "Primeiro",
+                        "last": "Ultimo",
+                        "next": "Próximo",
+                        "previous": "Anterior"
+                    },
+                    "aria": {
+                        "sortAscending": ": ative para classificar coluna ascendente",
+                        "sortDescending": ": ative para classificar coluna descendente"
+                    }
+                }
+            }
+            );
+
+    });
+</script>

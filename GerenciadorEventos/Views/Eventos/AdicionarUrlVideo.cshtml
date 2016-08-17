@@ -1,0 +1,41 @@
+﻿@model List<GerenciadorEventos.Entidades.Video>
+
+@if (Model.Count > 0)
+{
+    <div class="row">
+        <div class="col-md-10">
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <th width="80%">Url</th>
+                        <th width="20%">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int contador = 0;
+                        foreach (GerenciadorEventos.Entidades.Video videos in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="hidden" class="hidden-videos" value="@videos.url" />
+                                    @videos.url
+                                </td>
+                                <td>
+                                    <a data-ajax="true" data-ajax-method="POST" data-ajax-loading="" data-ajax-begin="AjaxBegin" data-ajax-complete="AjaxComplete" data-ajax-success="" data-ajax-update="#divUrlVideo" data-ajax-mode="replace" href="@Url.Action("RemoverUrlVideo", "Eventos",new { posicao = contador })">
+                                        <span class="glyphicon glyphicon-remove" aria-hidden="true" style="color:red;"></span>
+                                    </a>
+                                </td>
+                            </tr>
+                            contador++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+else
+{
+    <h4>Não há vídeo informado.</h4>
+}

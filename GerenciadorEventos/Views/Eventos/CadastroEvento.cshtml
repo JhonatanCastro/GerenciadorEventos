@@ -1,0 +1,592 @@
+﻿@model GerenciadorEventos.Entidades.Evento
+@{
+    ViewBag.Title = "Cadastro de Evento";
+    AjaxOptions ajaxEvento = new AjaxOptions();
+    ajaxEvento.HttpMethod = "POST";
+    ajaxEvento.InsertionMode = InsertionMode.Replace;
+    ajaxEvento.OnBegin = "AjaxBegin";
+    ajaxEvento.OnComplete = "AjaxComplete";
+    ajaxEvento.OnSuccess = "OnSuccessEvento";
+    ajaxEvento.OnFailure = "OnFailureEvento";
+}
+
+<style>
+    .glyphicon-remove{
+        color:red;
+    }
+</style>
+@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>*@
+
+<h2>@ViewBag.Title</h2>
+
+@using (Ajax.BeginForm("SalvarEvento", "Home", ajaxEvento, new { @class = "form-horizontal", role = "formEvento" }))
+{
+    @Html.AntiForgeryToken()
+    <h4>Criar um novo Evento.</h4>
+    <hr />
+    //@Html.ValidationSummary("", new { @class = "text-danger" })
+    @Html.HiddenFor(m => m.codigo)
+    @Html.HiddenFor(m => m.endereco.codigo)
+    @Html.HiddenFor(m => m.ativo)
+    @Html.HiddenFor(m => m.organizador.codigo)
+    <div class="form-group">
+        @Html.LabelFor(m => m.nome, new { @class = "col-md-2 control-label" })
+        <div class="col-md-8">
+            @Html.TextBoxFor(m => m.nome, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.nome)
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.descricao, new { @class = "col-md-2 control-label" })
+        <div class="col-md-8">
+            @Html.TextAreaFor(m => m.descricao, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.descricao)
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.dataHoraInicioInscricao, new { @class = "col-md-2 control-label" })
+        <div class="col-md-3">
+            @Html.TextBoxFor(m => m.dataHoraInicioInscricao, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.dataHoraInicioInscricao)
+        </div>
+
+        @Html.LabelFor(m => m.dataHoraFimInscricao, new { @class = "col-md-2 control-label" })
+        <div class="col-md-3">
+            @Html.TextBoxFor(m => m.dataHoraFimInscricao, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.dataHoraFimInscricao)
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.dataHoraInicio, new { @class = "col-md-2 control-label" })
+        <div class="col-md-3">
+            @Html.TextBoxFor(m => m.dataHoraInicio, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.dataHoraInicio)
+        </div>
+
+        @Html.LabelFor(m => m.dataHoraFim, new { @class = "col-md-2 control-label" })
+        <div class="col-md-3">
+            @Html.TextBoxFor(m => m.dataHoraFim, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.dataHoraFim)
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.vagas, new { @class = "col-md-2 control-label" })
+        <div class="col-md-2">
+            @Html.TextBoxFor(m => m.vagas, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.vagas)
+        </div>
+
+        @Html.LabelFor(m => m.pago, new { @class = "col-md-2 control-label" })
+        <div class="col-md-1" style="margin-top: 7px;">
+            @Html.CheckBoxFor(m => m.pago) <span> Sim</span>
+            @Html.ValidationMessageFor(m => m.pago)
+        </div>
+
+        <div id="divValor">
+            @Html.LabelFor(m => m.valor, new { @class = "col-md-1 control-label" })
+            <div class="col-md-2">
+                @Html.TextBoxFor(m => m.valor, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.valor)
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.endereco.logradouro, new { @class = "col-md-2 control-label" })
+        <div class="col-md-3">
+            @Html.TextBoxFor(m => m.endereco.logradouro, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.endereco.logradouro)
+        </div>
+
+        @Html.LabelFor(m => m.endereco.numero, new { @class = "col-md-1 control-label" })
+        <div class="col-md-1">
+            @Html.TextBoxFor(m => m.endereco.numero, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.endereco.numero)
+        </div>
+
+        @Html.LabelFor(m => m.endereco.bairro, new { @class = "col-md-1 control-label" })
+        <div class="col-md-2">
+            @Html.TextBoxFor(m => m.endereco.bairro, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.endereco.bairro)
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.endereco.cidade, new { @class = "col-md-2 control-label" })
+        <div class="col-md-3">
+            @Html.TextBoxFor(m => m.endereco.cidade, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.endereco.cidade)
+        </div>
+
+        @Html.LabelFor(m => m.endereco.cep, new { @class = "col-md-1 control-label" })
+        <div class="col-md-2">
+            @Html.TextBoxFor(m => m.endereco.cep, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.endereco.cep)
+        </div>
+
+        @Html.LabelFor(m => m.endereco.uf.codigo, new { @class = "col-md-1 control-label" })
+        <div class="col-md-1">
+            @Html.DropDownListFor(m => m.endereco.uf.codigo, new SelectList(ViewBag.Estados, "codigo", "uf"), "", new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.endereco.uf.codigo)
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.categoria.codigo, new { @class = "col-md-2 control-label" })
+        <div class="col-md-3">
+            @Html.DropDownListFor(m => m.categoria.codigo, new SelectList(ViewBag.Categorias, "codigo", "categoria"), "", new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.categoria.codigo)
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-md-2 control-label">Imagem de Capa</label>
+        <div class="col-md-3">
+            <span class="btn btn-default fileinput-button">
+                <span>Adicionar Imagem de Capa</span>
+                <input id="fileupload2" type="file" name="files" />
+
+            </span>
+        </div>
+        <div class="col-md-5" style="margin-top:10px;">
+            <div class="progress" id="progress2">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-offset-2 col-md-10" id="msgErroImagem" style="display:none;">
+            <span class="field-validation-error">A imagem não foi anexado, verifique o tamanho da mesma.</span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10" id="divImagemCapa">
+            @Html.Action("ExibirImagem", "Eventos", new { NomeImagem = Model.nomeImagem })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-md-2 control-label">Nome do Palestrante</label>
+        <div class="col-md-4">
+            <select class="form-control" id="cboxPalestrante">
+                <option>Selecione</option>
+                @foreach (GerenciadorEventos.Entidades.Usuario palestrante in ViewBag.Palestrantes)
+                {
+                    <option value="@palestrante.codigo">@palestrante.nome</option>
+                }
+            </select>
+            @*<a data-ajax="true" data-ajax-method="GET" data-ajax-loading="" data-ajax-success="" data-ajax-update="#divModal" data-ajax-mode="replace" href="@Url.Action("AdicionarPalestrante", "Home")" class="btn btn-default" style="color:black !important;"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Adicionar Palestrante</a>*@
+        </div>
+        <div class="col-md-3">
+            <button type="button" id="btnAddPalestrante" class="btn btn-default" onclick="AdicionarPalestrante();">Adicionar Palestrante</button>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10" id="divPalestrante">
+            @Html.Action("ExibirPalestrante", "Eventos")
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class = "col-md-2 control-label">Url Vídeo</label>
+        <div class="col-md-4">
+            <input type="text" id="inputUrl" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <button type="button" id="btnUrlVideo" class="btn btn-default" onclick="AdicionarUrlVideo();">Adicionar Url de Vídeo</button>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10" id="divUrlVideo">
+            @Html.Action("ExibirUrlVideo", "Eventos")
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-md-2 control-label">Conteúdo</label>
+        <div class="col-md-10">
+            <button type="button" id="btnConteudo" class="btn btn-default" onclick="AdicionarConteudo();">Adicionar Conteúdo</button>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10" id="divConteudo">
+            @Html.Action("ExibirConteudo", "Eventos")
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-8 col-md-2">
+            <input type="submit" class="btn btn-success" value="Confirmar" style="float:right;" />
+        </div>
+    </div>
+}
+
+
+
+<script>
+    $(function () {
+        $('#fileupload2').fileupload({
+            url: "@Url.Action("UploadImagem", "Eventos")",
+            dataType: 'html',
+            done: function (e, data) {
+                $("#divImagemCapa").html(data.result);
+                $("#msgErroImagem").css("display", "none");
+            },
+            progressall: function (e, data) {
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+
+                if (progress < 100) {
+
+                    $('div[role="progressbar"]').css(
+                        'width',
+                        progress + '%'
+                    );
+                    $("#msgErroImagem").css("display", "none");
+                } else {
+                    $('div[role="progressbar"]').css(
+                       'width',
+                       0 + '%'
+                   );
+
+                    $("#msgErroImagem").css("display", "");
+                }
+            },
+            error: function (e, data) {
+                $("#msgErroImagem").css("display", "");
+            }
+        });
+    });
+
+    function onClickRemoveImagem(elemento, NomeImagem) {
+
+        $.ajax({
+            async: true,
+            url: "@Url.Action("RemoverImagem", "Eventos")",
+            data: { "nomeImagem": NomeImagem },
+            dataType: "json",
+            beforeSend: function (XMLHttpRequest, config) {
+            },
+            success: function (data, status, XMLHttpRequest) {
+
+                var objJson = JSON.parse(JSON.stringify(data));
+
+                if (objJson.act == 0) {
+                    mensagem("@Url.Action("Mensagem", "Home")", 0, "Falha ao Remover Imagem", objJson.mensagem, null);
+                } else {
+                    $(elemento).remove();
+                }
+            },
+            error: function (event, xhr, setting, thrownError) {
+                mensagem("@Url.Action("Mensagem", "Home")", 0, "Erro", xhr.responseText, null);
+            }
+        });
+    };
+
+    function OnSuccessEvento(Data, strStatus, XMLRequest) {
+        var objJson = JSON.parse(JSON.stringify(Data));
+        if (objJson.act == 1) {
+            mensagem("@Url.Action("Mensagem", "Home")", 1, "Sucesso", objJson.mensagem, null);
+            $(document).on('hide.bs.modal', '#dvModalMensagem', function () {
+                window.location.href = "@Url.Action("Index","Eventos")";
+            });
+        }
+        else {
+            mensagem("@Url.Action("Mensagem", "Home")", 0, "Erro", objJson.mensagem, null);
+        }
+    };
+
+    function OnFailureEvento(event, xhr, setting, thrownError) {
+        var objJson = JSON.parse(JSON.stringify(xhr));
+        mensagem("@Url.Action("Mensagem", "Home")", 0, "Erro", objJson.mensagem, null);
+    };
+
+
+
+    function AdicionarPalestrante() {
+        if ($("#cboxPalestrante").val() != "Selecione") {
+            var existe = false;
+            $('.hidden-palestrante').each(function (i, obj) {
+                if ($(this).val() == $("#cboxPalestrante").val()) {
+                    existe = true;
+                }
+            });
+            if(!existe){
+                $.ajax({
+                    url: "@Url.Action("AdicionarPalestrante","Eventos")",
+                    data: { "codigoPalestrante": $("#cboxPalestrante").val() },
+                    beforeSend: function () {
+                        AjaxBegin();
+                    },
+                    complete: function () {
+                        AjaxComplete();
+                    },
+                    success: function (data) {
+                        $("#divPalestrante").html(data);
+                    }
+                });
+            }
+            else
+            {
+                mensagem("@Url.Action("Mensagem", "Home")", 0, "Erro", "Palestrante já adicionado.", null);
+            }
+        }
+    }
+
+    function AdicionarUrlVideo() {
+        if ($("#inputUrl").val() != "") {
+            var existe = false;
+            $('.hidden-videos').each(function (i, obj) {
+                if ($(this).val() == $("#inputUrl").val()) {
+                    existe = true;
+                }
+            });
+            if(!existe){
+                $.ajax({
+                    url: "@Url.Action("AdicionarUrlVideo", "Eventos")",
+                    data: { "Url": $("#inputUrl").val() },
+                    beforeSend: function () {
+                        AjaxBegin();
+                    },
+                    complete: function () {
+                        AjaxComplete();
+                    },
+                    success: function (data) {
+                        $("#divUrlVideo").html(data);
+                    }
+                });
+            }
+            else
+            {
+                mensagem("@Url.Action("Mensagem", "Home")", 0, "Erro", "Url já adicionada.", null);
+            }
+        }
+    }
+
+    function AdicionarConteudo() {
+        $.ajax({
+            url: "@Url.Action("ModalConteudo", "Eventos")",
+            beforeSend: function () {
+                AjaxBegin();
+            },
+            complete: function () {
+                AjaxComplete();
+            },
+            success: function (data) {
+                $("#divModal").html(data);
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        if("@Model.pago" == "True"){
+            $("#divValor").css("display", "");
+        } else {
+            $("#divValor").css("display", "none");
+        }
+    });
+
+    $('#pago').on('click', function () {
+        if (this.checked) {
+            $("#divValor").css("display", "");
+        } else {
+            $("#divValor").css("display", "none");
+        }
+    });
+
+    //Mascaras
+    $(document).ready(function () {
+        $("#dataHoraInicioInscricao").mask("99/99/9999 99:99");
+        $("#dataHoraFimInscricao").mask("99/99/9999 99:99");
+        $("#dataHoraInicio").mask("99/99/9999 99:99");
+        $("#dataHoraFim").mask("99/99/9999 99:99");
+
+
+        $("#valor").maskMoney({
+            symbol: '',
+            showSymbol: true, thousands: '.', decimal: ',', symbolStay: true
+        });
+    });
+
+    //Validações formulário
+    jQuery.validator.addMethod("dataMaior", function (value, element) {
+        value = jQuery.trim(value);
+        var retorno = true;
+
+        //var elem = document.getElementById('inputDataValidade');
+        //var date = document.getElementById('inputDataValidade').value;
+        data1 = new Date();
+
+        Nova1 = (data1.getMonth() + 1) + "/" + data1.getDate() + "/" + data1.getFullYear();
+        var nova2 = value.toString().split('/');
+        Nova2 = nova2[1] + "/" + nova2[0] + "/" + nova2[2];
+
+        var dt1 = new Date(Nova1);
+        var dt2 = new Date(Nova2);
+
+        if (dt1.getTime() > dt2.getTime()) {
+            retorno = false;
+        }
+
+        return retorno;
+    });
+
+    jQuery.validator.addMethod("dataInvalida", function (value, element) {
+        value = jQuery.trim(value);
+        var retorno = true;
+
+        if (verificaData(value) == false) {
+            retorno = false
+        }
+
+        return retorno;
+    });
+
+    $.validator.addMethod("time24", function (value, element) {
+        var data = value.split(" ");
+        if (!/^\d{2}:\d{2}$/.test(data[1])) return false;
+        var parts = data[1].split(':');
+        if (parts[0] > 23 || parts[1] > 59) return false;
+        return true;
+    });
+
+    jQuery.validator.addMethod("eventopago", function (value, element) {
+        value = jQuery.trim(value);
+        var retorno = true;
+
+        if ($("#pago").prop("checked")) {
+            if(value == "" || value == "0" || value == "0,00"){
+                retorno = false
+            }
+        }
+
+        return retorno;
+    });
+
+    $("#form0").validate({
+        rules: {
+            'nome': {
+                required: true
+            },
+            'descricao': {
+                required: true
+            },
+            'dataHoraInicioInscricao': {
+                required: true,
+                dataInvalida: true,
+                time24: true,
+                dataMaior: true
+            },
+            'dataHoraFimInscricao': {
+                required: true,
+                dataInvalida: true,
+                time24: true,
+                dataMaior: true
+            },
+            'dataHoraInicio': {
+                required: true,
+                dataInvalida: true,
+                time24: true,
+                dataMaior: true
+            },
+            'dataHoraFim': {
+                required: true,
+                dataInvalida: true,
+                time24: true,
+                dataMaior: true
+            },
+            'vagas': {
+                required: true
+            },
+            'valor': {
+                eventopago: true
+            },
+            'endereco.logradouro': {
+                required: true
+            },
+            'endereco.numero': {
+                required: true
+            },
+            'endereco.bairro': {
+                required: true
+            },
+            'endereco.cidade': {
+                required: true
+            },
+            'endereco.cep': {
+                required: true
+            },
+            'endereco.uf.codigo': {
+                required: true
+            },
+            'categoria.codigo': {
+                required: true
+            }
+        },
+        messages: {
+            'nome': {
+                required: "Informe o nome"
+            },
+            'descricao': {
+                required: "Informe a descrição"
+            },
+            'dataHoraInicioInscricao': {
+                required: "Informe a data e hora do inicio da inscrição",
+                dataInvalida: "Informe uma data válida",
+                time24: "A hora esta em um formato inválido",
+                dataMaior: "Informe uma data maior que a data atual"
+            },
+            'dataHoraFimInscricao': {
+                required: "Informe a data e hora do fim da inscrição",
+                dataInvalida: "Informe uma data válida",
+                time24: "A hora esta em um formato inválido",
+                dataMaior: "Informe uma data maior que a data atual"
+            },
+            'dataHoraInicio': {
+                required: "Informe a data e hora do inicio do evento",
+                dataInvalida: "Informe uma data válida",
+                time24: "A hora esta em um formato inválido",
+                dataMaior: "Informe uma data maior que a data atual"
+            },
+            'dataHoraFim': {
+                required: "Informe a data e hora do fim do evento",
+                dataInvalida: "Informe uma data válida",
+                time24: "A hora esta em um formato inválido",
+                dataMaior: "Informe uma data maior que a data atual"
+            },
+            'vagas': {
+                required: "Informe o número de vagas"
+            },
+            'valor': {
+                eventopago: "Informe o valor"
+            },
+            'endereco.logradouro': {
+                required: "Informe o logradouro"
+            },
+            'endereco.numero': {
+                required: "Informe o número"
+            },
+            'endereco.bairro': {
+                required: "Informe o bairro"
+            },
+            'endereco.cidade': {
+                required: "Informe a cidade"
+            },
+            'endereco.cep': {
+                required: "Informe o cep"
+            },
+            'endereco.uf.codigo': {
+                required: "Informe o estado"
+            },
+            'categoria.codigo': {
+                required: "Informe a categoria"
+            }
+        }
+    });
+</script>

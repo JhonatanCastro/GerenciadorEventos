@@ -1,0 +1,209 @@
+﻿@model GerenciadorEventos.Entidades.Conteudo
+@{
+    AjaxOptions ajaxConteudo = new AjaxOptions();
+    ajaxConteudo.HttpMethod = "POST";
+    ajaxConteudo.InsertionMode = InsertionMode.Replace;
+    ajaxConteudo.OnBegin = "AjaxBegin";
+    ajaxConteudo.OnComplete = "AjaxComplete";
+    ajaxConteudo.OnSuccess = "OnSuccessConteudo";
+    ajaxConteudo.OnFailure = "OnFailureConteudo";
+}
+
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" id="modalConteudo">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Adicionar Conteúdo</h4>
+            </div>
+            @using (Ajax.BeginForm("AdicionarConteudo", "Eventos", null, ajaxConteudo, new { id = "frmConteudo" }))
+            {
+                @Html.HiddenFor(m => m.usuario.codigo)
+            <div class="modal-body">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.LabelFor(m => m.tipoConteudo)
+                            @Html.TextBoxFor(m => m.tipoConteudo, new { @Class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.tipoConteudo)
+                        </div>
+                        <div class="col-md-8">
+                            @Html.LabelFor(m => m.descricao)
+                            @Html.TextBoxFor(m => m.descricao, new { @Class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.descricao)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <span class="btn btn-primary fileinput-button">
+                                <i class="glyphicon glyphicon-plus"></i>
+                                <span>Adicionar Anexo</span>
+                                <input id="fileupload" type="file" name="files" />
+
+                            </span>
+                        </div>
+                        <div class="col-md-8" style="margin-top:10px;">
+                            <div class="progress" id="progress">
+                                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12"><div id="divErroAnexo"></div></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12" id="msgErroAnexo" style="display:none;">
+                            <span class="field-validation-error">O arquivo não foi anexado, verifique o tamanho do mesmo.</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="divAnexo"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                <button type="submit" class="btn btn-primary">Salvar</button>
+            </div>
+            }
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script src="../Scripts/FileUpload/jquery.ui.widget.js"></script>
+<script src="../Scripts/FileUpload/jquery.iframe-transport.js"></script>
+<script src="../Scripts/FileUpload/jquery.fileupload.js"></script>
+<link href="../Content/FileUpload/jquery.fileupload.css" rel="stylesheet" type="text/css" />
+
+<script>
+    $("#modalConteudo").modal();
+
+    /*#################Anexos#################################*/
+    $(function () {
+        $('#fileupload').fileupload({
+            url: "@Url.Action("UploadAnexo","Eventos")",
+            dataType: 'html',
+            done: function (e, data) {
+                $("#divAnexo").html(data.result);
+                $("#msgErroAnexo").css("display","none");
+            },
+            progressall: function (e, data) {
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+
+                if (progress < 100) {
+
+                    $('div[role="progressbar"]').css(
+                        'width',
+                        progress + '%'
+                    );
+                    $("#msgErroAnexo").css("display", "none");
+                } else {
+                    $('div[role="progressbar"]').css(
+                       'width',
+                       0 + '%'
+                   );
+
+                    $("#msgErroAnexo").css("display", "");
+                }
+            },
+            error: function (e, data) {
+                $("#msgErroAnexo").css("display", "");
+            }
+        });
+    });
+
+    function onClickRemoveAnexo(elemento, NomeAnexo) {
+
+        $.ajax({
+            async: true,
+            url: "@Url.Action("RemoverAnexo","Eventos")",
+            data: { "nomeAnexo": NomeAnexo },
+            dataType: "json",
+            beforeSend: function (XMLHttpRequest, config) {
+            },
+            success: function (data, status, XMLHttpRequest) {
+
+                var objJson = JSON.parse(JSON.stringify(data));
+
+                if (objJson.act == 0) {
+                    mensagem("@Url.Action("Mensagem", "Home")", 0, "Falha ao Remover Anexo", objJson.mensagem, null);
+                } else {
+                    $(elemento).remove();
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.responseText);
+            }
+        });
+    }
+
+    function OnSuccessConteudo(Data, strStatus, XMLRequest) {
+        $("#divConteudo").html(Data);
+        $("#modalConteudo").modal('hide');
+    }
+
+    function OnFailureConteudo() {
+        mensagem("@Url.Action("Mensagem", "Home")", 0, "Erro", "Falha ao salvar o conteúdo!", null);
+    }
+
+    jQuery.validator.addMethod("file", function (value, element) {
+        value = jQuery.trim(value);
+        var retorno = false;
+
+        if ($('#divAnexo').html() != null && $('#divAnexo').html() != "") {
+            retorno = true;
+        }
+
+        return retorno;
+    });
+
+    jQuery.validator.setDefaults({
+        debug: true,
+        success: "valid",
+        errorPlacement: function (error, element) {
+            if (element.attr("name") == "files") {
+                error.insertAfter("#divErroAnexo");
+            }
+            else {
+                error.insertAfter(element);
+            }
+        }
+    });
+
+    $("#frmConteudo").validate({
+        validClass: "success",
+        errorElement: "label-error",
+        rules: {
+            'tipoConteudo': {
+                required: true
+            },
+            'descricao': {
+                required: true
+            },
+            'files': {
+                file: true
+            }
+        },
+        messages: {
+            'tipoConteudo': {
+                required: "Informe o tipo de conteúdo."
+            },
+            'descricao': {
+                required: "Informe uma descrição para o conteúdo."
+            },
+            'files': {
+                file: "Selecione um anexo."
+            }
+        }
+    });
+</script>

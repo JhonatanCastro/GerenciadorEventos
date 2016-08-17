@@ -1,0 +1,762 @@
+﻿@model GerenciadorEventos.Entidades.Evento
+@{
+    ViewBag.Title = "VisualizarEvento";
+
+    GerenciadorEventos.Entidades.Usuario usuario = new GerenciadorEventos.Entidades.Usuario();
+    if (Session["usuario"] != null)
+    {
+        usuario = (GerenciadorEventos.Entidades.Usuario)Session["usuario"];
+    }
+
+    int vagasDisponiveis = Model.vagas.Value - Model.inscritos;
+}
+
+<style>
+    .event-section:nth-child(even) {
+        background-color: #fff !important;
+    }
+
+    .event-section:nth-child(odd) {
+        background-color: #f6f6f6 !important;
+    }
+
+    .border-right {
+        border-right: 1px solid #dfdfdf;
+    }
+    .border-left {
+        border-left: 1px solid #dfdfdf;
+    }
+    .border-top {
+        border-top: 1px solid #dfdfdf;
+    }
+    .border-bottom{
+        border-bottom: 1px solid #dfdfdf;
+    }
+
+    @@media (min-width: 120px){
+        .full-width-image-banner {
+            min-height: 80px;
+            max-height: 125px;
+        }
+    }
+
+    @@media (min-width: 480px){
+        .full-width-image-banner {
+            min-height: 103px;
+            max-height: 203px;
+        }
+    }
+
+    @@media (min-width: 768px){
+        .full-width-image-banner {
+            min-height: 162px;
+            max-height: 262px;
+        }
+
+        .event-section .icon-section {
+            left: -20px;
+            display: inline-block;
+        }
+
+        .event-section {
+            padding-bottom: 20px;
+            padding-left: 30px;
+            padding-right: 15px;
+        }
+    }
+
+    @@media (min-width: 1200px){
+        .full-width-image-banner {
+            min-height: 305px;
+            max-height: 406px;
+        }
+    }
+
+    .full-width-image-banner {
+        display: inline-block;
+        width: 100%;
+        height: 350px;
+        max-height: 400px;
+        background-position: center center;
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+    @@media only screen and (min-width: 320px) {
+        .table-tickets {
+            position: relative !important;
+            margin-bottom: 20px !important;
+            top: 0 !important;
+        }
+    }
+
+    @@media only screen and (min-width: 992px){
+        .table-tickets .title {
+            background-color: #3B3C3C;
+            background-color: rgba(39, 40, 40, 0.9);
+            font-size: 17px;
+            border-top: 1px solid #fff;
+            border-left: 1px solid #fff;
+            border-right: 1px solid #fff;
+            border-bottom: 0;
+            height: 40px;
+            color: #fff;
+        }
+
+        .table-tickets {
+            position: relative !important;
+            top: -41px !important;
+            /* z-index: 1000; */
+            margin-bottom: -5000px !important;
+        }
+
+        .margin-top-0-md {
+            margin-top: 0 !important;
+        }
+    }
+    
+    .table-tickets table {
+        width: 100%;
+        /* background-color: #fff; */
+    }
+    table {
+        max-width: 100%;
+        background-color: transparent;
+        border-spacing: 0;
+        border-collapse: collapse;
+    }
+
+    .table-tickets {
+        color: #50525f;
+        z-index: 1000;
+    }
+
+    .table-tickets .title .row {
+        margin: 0;
+        padding: 6px 0 6px 0;
+    }
+
+    .table-tickets .title {
+        background-color: #3B3C3C;
+        background-color: rgba(39, 40, 40, 0.9);
+        font-size: 17px;
+        border-top: 1px solid #3B3C3C;
+        border-left: 1px solid #3B3C3C;
+        border-right: 1px solid #3B3C3C;
+        border-bottom: 0;
+        height: 40px;
+        color: #fff;
+    }
+    .table-tickets table tr {
+        border-bottom: 1px solid #ddd;
+        border-left: 1px solid #ddd;
+        border-right: 1px solid #ddd;
+        padding: 5px 0 5px 10px;
+        font-size: 11px;
+    }
+    .table-tickets table tr {
+        background-color: #fff;
+    }
+
+    .table-tickets h4 {
+        color: #fff;
+        font-size: 14px;
+    }
+
+    .table-tickets .opt-panel {
+        text-align: right;
+        padding-right: 7px;
+        min-width: 95px;
+    }
+
+    .table-tickets table td {
+        padding: 5px 10px 5px 10px;
+    }
+
+    td, th {
+        padding: 0;
+    }
+
+    user agent stylesheet
+    td, th {
+        display: table-cell;
+        vertical-align: inherit;
+    }
+
+    .kill-bottom-margin {
+        margin-bottom: 0 !important;
+    }
+    .kill-top-margin {
+        margin-top: 0 !important;
+    }
+
+    form {
+        position: relative;
+        z-index: 3;
+    }
+
+    .fixar{
+        width: 351px;
+        left: 855px;
+        position: fixed !important;
+        top: 50px !important;
+    }
+
+    .event-section .icon-section {
+        position: absolute;
+        font-size: 18px;
+        top: 24px;
+        left: 9px;
+        text-align: center;
+        display: inline-block;
+        width: 28px;
+    }
+
+    .span-icone{
+        position: absolute;
+        margin-top: 25px;
+        margin-left: -21px;
+    }
+
+    #map-canvas {
+        width: 100%;
+        height: 400px;
+        border: 0;
+        border-radius: 2px;
+    }
+
+    textarea {
+        resize: none;
+        border-radius: 0px !important;
+    }
+
+    #span-publicar-comentario{
+        display:inherit !important;
+        width:100%;
+        text-align:right;
+        background-color: #f6f6f6;
+        border-radius: 0px;
+        border-left: 1px solid rgb(204, 204, 204);
+        border-right: 1px solid rgb(204, 204, 204);
+        border-bottom: 1px solid rgb(204, 204, 204);
+        border-top:none;
+    }
+
+    #btn-publicar{
+        border-radius: 0px;
+        padding-top: 2px;
+        padding-bottom: 1px;
+    }
+</style>
+
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCqz99JC65On0V9eoTtgprJWNwvcnj_4jQ&amp;sensor=false"></script>
+
+<br/>
+<div class="container">
+    <div class="container border-bottom bg-white kill-padding " style="font-size: 0;">
+        <div class="full-width-image-banner dynamic-height">
+            @if (Model.nomeImagem != "")
+            {
+                @*<img width="328" height="129" src="@evento.strImagem" />*@
+                <img class="full-width-image-banner" src="@Url.Action("ExibirImagem", "Home", new { CodigoEvento = Model.codigo })" />
+            }
+            else
+            {
+                <img class="full-width-image-banner" src="~/Content/imagens/fotonaodisponivel.jpg" />
+            }
+        </div>
+    </div>
+
+    <div class="container border-left border-right border-top event-section bg-white" id="info">
+        <div class="">
+            <div class="col-md-8 col-lg-8 col-sm-12 col-xs-12">
+                <h1 class="uppercase">@Model.nome</h1>
+                <div><i class="fa fa-map-marker"></i> @Model.endereco.cidade, @Model.endereco.uf.uf</div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="">
+                            <div>
+                                <i class="fa fa-calendar"></i>
+                                @string.Format("{0:f}", Model.dataHoraInicio) até @string.Format("{0:f}", Model.dataHoraFim)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <input id="tickets-total" type="hidden" value="0">
+            <div id="divInscricao" class="table-tickets col-lg-4 col-md-4 col-sm-12 col-xs-12 margin-top-20-xs margin-top-0-md" style="display: block;">
+                <form id="ticket-form" action="" method="post">
+                    <table>
+                        <tbody>
+                            <tr class="title">
+                                <th class="tg-031e" colspan="2">
+                                    <div class="row">
+                                        <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
+                                            <h4 class="kill-top-margin kill-bottom-margin">Inscrição</h4>
+                                        </div>
+                                        <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
+                                            @if (Model.pago == true)
+                                            {
+                                                <h4 class="kill-top-margin kill-bottom-margin pull-right"><i class="fa fa-shopping-cart"></i> <span id="lbl-tickets-total">@string.Format("{0:C}", Model.valor.Value)</span></h4>
+                                            }
+                                            else
+                                            {
+                                                <h4 class="kill-top-margin kill-bottom-margin pull-right"><i class="fa fa-shopping-cart"></i> <span id="lbl-tickets-total">R$ 0,00</span></h4>
+                                            }
+                                        </div>
+                                    </div>
+                                </th>
+                            </tr>
+                            <tr>
+                                <td class="">
+                                    <span style="font-weight: bold; word-break: break-all;">@Model.nome</span>
+                                    <br>
+                                    <span>@if (Model.pago == true) { <span>Pago</span> } else { <span>Gratuito</span> }</span>
+                                    @{
+                                        if (vagasDisponiveis != 0)
+                                        {
+                                            <br />
+                                            <span id="VagasDisponiveis">@vagasDisponiveis vagas disponíveis</span>
+                                        }
+                                        else
+                                        {
+                                            <br />
+                                            <span>Não há vagas disponíveis</span>
+                                        }
+                                    }
+                                    @if (Model.dataHoraFimInscricao >= DateTime.Now)
+                                    {
+                                        <br>
+                                        <span class="note">Inscrições até @string.Format("{0:f}", Model.dataHoraFimInscricao)</span>
+                                    }
+                                </td>
+                                @if (Model.dataHoraInicio <= DateTime.Now && Model.dataHoraFim >= DateTime.Now)
+                                {
+                                    <td class="opt-panel" style="">
+                                        Em andamento
+                                    </td>
+                                }
+                                else if (Model.dataHoraInicio <= DateTime.Now && Model.dataHoraFim <= DateTime.Now)
+                                {
+                                    <td class="opt-panel" style="">
+                                        Encerrado
+                                    </td>
+                                }
+
+                            </tr>
+                            <tr>
+                                <td class="" colspan="2">
+                                    <div id="inscricao-container" class="text-center">
+                                        @if (Session["usuario"] != null)
+                                        {
+                                           
+                                            if (Model.dataHoraFimInscricao <= DateTime.Now)
+                                            {
+                                                <a class="btn btn-warning mo-popover btn-disabled btn-whitespace-normal" href="javascript:;">Inscrição indisponível</a>
+                                            }
+                                            else if (usuario.eventosInscritos.Where(m => m.evento.codigo == Model.codigo).ToList().Count > 0)
+                                            {
+                                                <a class="btn btn-danger mo-popover btn-disabled btn-whitespace-normal" onclick="CancelarInscricao('@Model.codigo','@usuario.codigo');">Cancelar Inscrição</a>
+                                            }
+                                            else if (Model.inscritos >= Model.vagas)
+                                            {
+                                                <a class="btn btn-warning mo-popover btn-disabled btn-whitespace-normal" href="javascript:;">Inscrição indisponível</a>
+                                            }
+                                            else if (Model.dataHoraInicio <= DateTime.Now)
+                                            {
+                                                <a class="btn btn-warning mo-popover btn-disabled btn-whitespace-normal" href="javascript:;">Nenhuma ação disponível</a>
+                                            }
+                                            else if (vagasDisponiveis == 0)
+                                            {
+                                                <a class="btn btn-warning mo-popover btn-disabled btn-whitespace-normal" href="javascript:;">Inscrição indisponível</a>
+                                            }
+                                            else
+                                            {
+                                                <a class="btn btn-success mo-popover btn-disabled btn-whitespace-normal" onclick="Inscricao(@Model.codigo);">Inscrever</a>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (Model.dataHoraFimInscricao <= DateTime.Now)
+                                            {
+                                                <a class="btn btn-warning mo-popover btn-disabled btn-whitespace-normal" href="javascript:;">Inscrição indisponível</a>
+                                            }
+                                            else if (Model.inscritos >= Model.vagas)
+                                            {
+                                                <a class="btn btn-warning mo-popover btn-disabled btn-whitespace-normal" href="javascript:;">Inscrição indisponível</a>
+                                            }
+                                            else if (Model.dataHoraInicio <= DateTime.Now)
+                                            {
+                                                <a class="btn btn-warning mo-popover btn-disabled btn-whitespace-normal" href="javascript:;">Nenhuma ação disponível</a>
+                                            }
+                                            else if (vagasDisponiveis == 0)
+                                            {
+                                                <a class="btn btn-warning mo-popover btn-disabled btn-whitespace-normal" href="javascript:;">Inscrição indisponível</a>
+                                            }
+                                            else
+                                            {
+                                                <a class="btn btn-success mo-popover btn-disabled btn-whitespace-normal" onclick="Inscricao(@Model.codigo);">Inscrever</a>
+                                            }
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+        <br/>
+    </div>
+
+    <div class="container border-top border-left border-right event-section" id="descricao">
+        <div class="col-md-8 col-lg-12 col-sm-12 col-xs-12" id="event-txt">
+            <span class="fa fa-align-left span-icone"></span>
+            <h3 id="description">Descrição do evento</h3>
+            <b>SOBRE</b><br>
+            <p>@Model.descricao</p>
+
+        </div><br/><br />
+        @if (Model.palestrante.Count > 0)
+        {
+            <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12">
+                @if (Model.palestrante.Count == 1)
+                {
+                    <b>PALESTRANTE</b><br />
+                }
+                else
+                {
+                    <b>PALESTRANTES</b><br />
+                }
+                @foreach (GerenciadorEventos.Entidades.Usuario palestrante in Model.palestrante)
+                {
+                    <p>@palestrante.nome</p>
+                }
+            </div>
+        }
+
+        @if (Model.videos.Count > 0)
+        {
+            <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12">
+                <b>URL</b><br />
+                <div class="row">
+                    @foreach (GerenciadorEventos.Entidades.Video video in Model.videos)
+                    {
+                        <div class="col-md-6">
+                            <iframe width="480" height="270" src="@video.url" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        <br/>
+
+        @if (Model.conteudo.Count > 0)
+        {
+            <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12">
+                <b>CONTEÚDO</b><br />
+                <table class="table table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th width="20%">Tipo de Conteúdo</th>
+                            <th width="40%">Descrição</th>
+                            <th width="20%">Anexo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            foreach (GerenciadorEventos.Entidades.Conteudo conteudo in Model.conteudo)
+                            {
+                                <tr>
+                                    <td>
+                                        @conteudo.tipoConteudo
+                                    </td>
+                                    <td>
+                                        @conteudo.descricao
+                                    </td>
+                                    <td>
+                                        <a href="@Url.Action("DownloadAnexoVisualizar", "Eventos", new { CodigoEvento = Model.codigo, CodigoAnexo = conteudo.codigo })" class="lnkAcao">
+                                            <span class="fa fa-file-o" style="font-size:15px;">
+                                                @conteudo.nomeAnexo
+                                            </span>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+                            }
+    </div>
+
+    <div class="container border-top border-left border-right event-section bg-white kill-bottom-padding" id="local">
+        <div class="col-md-8 col-lg-8 col-sm-7 col-xs-12">
+            <span class="fa fa-map-marker span-icone"></span>
+            <h3 id="local">Local</h3>
+            <p class="margin-bottom-20-xs margin-bottom-40-sm">
+
+                @Model.endereco.logradouro, @Model.endereco.numero, @Model.endereco.bairro<br>@Model.endereco.cidade, @Model.endereco.uf.uf
+            </p>
+        </div>
+    </div>
+
+    <div class="container border-top border-left border-right kill-padding" style="padding-left: 0px;padding-right: 0px;">
+
+        <style>
+            #map-canvas img {
+                max-width: none;
+            }
+        </style>
+
+        <div id="map-canvas" style="position: relative; overflow: hidden; transform: translateZ(0px); background-color: rgb(229, 227, 223);"></div>
+        <input type="hidden" id="txtLatitude" name="txtLatitude" />
+        <input type="hidden" id="txtLongitude" name="txtLongitude" />
+    </div>
+
+    <div class="container border-top border-left border-right border-bottom event-section">
+        <div class="col-md-8 col-lg-8 col-sm-7 col-xs-12">
+            <span class="fa fa-comment-o span-icone"></span>
+            <h3 id="comment">Comentários</h3>
+            <div class="row">
+                <div class="col-md-4">
+                    <b id="NumeroComentarios">@Model.comentarios.Count Comentários</b>
+                </div>
+                @if (Session["usuario"] != null)
+                {
+                    <div class="col-md-8" style="text-align:right;">
+                        <b>@usuario.nome</b>
+                    </div>
+                }
+            </div>
+            <div class="row" style="margin-top:10px;">
+                <div class="col-md-12">
+                    <div class="input-group" style="display:inherit !important;">
+                        <textarea id="areaComentario" cols="2" class="form-control" placeholder="Adicionar comentário..." maxlength="250"></textarea>
+                        <span id="span-publicar-comentario" class="input-group-addon">
+                            <button id="btn-publicar" class="btn btn-primary" onclick="PublicarComentario(@Model.codigo);">Publicar</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <span id="spanErroComentario" style="color:red; display:none;">Informe um comentário</span>
+            </div>
+            <div id="divComentarios" style="margin-top:10px;">
+                @if (Model.comentarios.Count > 0)
+                {
+                    foreach (GerenciadorEventos.Entidades.Comentario comentario in Model.comentarios.OrderBy(m => m.data))
+                    {
+                        <div class="row" id="@comentario.codigo">
+                            <div class="col-md-12">
+                                <span style="color:#3276b1">
+                                    @comentario.usuario.nome @if (Model.palestrante.Where(m => m.codigo == comentario.usuario.codigo).ToList().Count > 0 ) { <span> - @comentario.usuario.nivelAcesso.nivelAcesso</span> } @if (Model.organizador.codigo == comentario.usuario.codigo) { if (comentario.usuario.nivelAcesso.codigo != 4) { <span> - @comentario.usuario.nivelAcesso.nivelAcesso</span> } else { <span> - Organizador</span> }  } - @string.Format("{0:g}", comentario.data)
+                                </span>
+                                @if (comentario.usuario.codigo == usuario.codigo || comentario.evento.organizador.codigo == usuario.codigo || usuario.nivelAcesso.codigo == 4)
+                                {
+                                    <span style="margin-top: 5px;float: right;color:#3276b1; font-size:10px; cursor: pointer;" onclick="RemoverComentario(@comentario.codigo, @comentario.evento.codigo);">
+                                        Remover
+                                    </span>
+                                }
+                                <div class="_30o4">
+                                    <span class="_5mdd">
+                                        <span>@comentario.comentario</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>*@
+<script>
+    var offset = $("#divInscricao").offset().top;
+    var $meuMenu = $("#divInscricao");
+    $(document).on('scroll', function () {
+        if (offset <= $(window).scrollTop()) {
+            $meuMenu.addClass('fixar');
+        } else {
+            $meuMenu.removeClass('fixar');
+        }
+    });
+
+
+    var geocoder;
+    var map;
+    var marker;
+
+    function initialize() {
+        var latlng = new google.maps.LatLng(-18.8800397, -47.05878999999999);
+        var options = {
+            zoom: 5,
+            center: latlng,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+
+        map = new google.maps.Map(document.getElementById("map-canvas"), options);
+
+        geocoder = new google.maps.Geocoder();
+
+        marker = new google.maps.Marker({
+            map: map,
+            draggable: true,
+        });
+
+        marker.setPosition(latlng);
+    }
+
+    $(document).ready(function () {
+        initialize();
+        carregarNoMapa("@Model.endereco.logradouro"+", "+"@Model.endereco.cidade"+" - "+"@Model.endereco.uf.uf"+", "+"@Model.endereco.cep");
+    });
+
+    function carregarNoMapa(endereco) {
+        geocoder.geocode({ 'address': endereco + ', Brasil', 'region': 'BR' }, function (results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                if (results[0]) {
+                    var latitude = results[0].geometry.location.lat();
+                    var longitude = results[0].geometry.location.lng();
+
+                    //$('#txtEndereco').val(results[0].formatted_address);
+                    $('#txtLatitude').val(latitude);
+                    $('#txtLongitude').val(longitude);
+
+                    var location = new google.maps.LatLng(latitude, longitude);
+                    marker.setPosition(location);
+                    map.setCenter(location);
+                    map.setZoom(16);
+                }
+            }
+        });
+    };
+
+    function Inscricao(codigoEvento) {
+        if ("@Session["usuario"]" != "")
+        {
+            $.ajax({
+                url: "@Url.Action("Inscricao", "Eventos")",
+                data: { "CodigoEvento": codigoEvento, "CodigoUsuario": "@usuario.codigo" },
+                type: "GET",
+                contentType: 'html',
+                beforeSend: function () {
+                    AjaxBegin();
+                },
+                complete: function () {
+                    AjaxComplete();
+                },
+                success: function (data, textStatus, jqXHR) {
+                    $('#inscricao-container').html(data);
+                    mensagem("@Url.Action("Mensagem", "Home")", 1, "Sucesso", "Inscrição realizada com sucesso.", null);
+                }
+            })
+        }
+        else
+        {
+            mensagem("@Url.Action("Mensagem", "Home")", 0, "Alerta", "Você precisa estar logado para se inscrever.", null);
+        }
+    };
+
+    function CancelarInscricao(codigoEvento, codigoUsuario) {
+        mensagemDecisao("@Url.Action("MensagemDecisao", "Home")", 0, "Alerta", "Você realmente deseja cancelar sua inscrição?", function () {
+            $("#dvModalMensagemDecisao").modal('hide');
+            $.ajax({
+                url: "@Url.Action("CancelarInscricao","Eventos")",
+                data: { "CodigoEvento": codigoEvento, "CodigoUsuario": codigoUsuario },
+                type: "GET",
+                contentType: 'html',
+                beforeSend: function () {
+                    AjaxBegin();
+                },
+                complete: function () {
+                    AjaxComplete();
+                },
+                success: function (data, textStatus, jqXHR) {
+                    $('#inscricao-container').html(data);
+                    $('div').removeClass("modal-backdrop fade in");
+                    mensagem("@Url.Action("Mensagem", "Home")", 1, "Sucesso", "Inscrição cancelada com sucesso.", null);
+                }
+            })
+        });
+    };
+
+    function PublicarComentario(codigoEvento)
+    {
+        if ("@Session["usuario"]" != "")
+        {
+            var areaComentario = $("#areaComentario").val();
+
+            if (areaComentario == "")
+            {
+                $("#spanErroComentario").css("display", "");
+                $("#areaComentario").addClass("error");
+                $("#areaComentario").focus;
+            }
+            else
+            {
+                $("#spanErroComentario").css("display", "none");
+                $("#areaComentario").removeClass("error");
+
+                $.ajax({
+                    url: "@Url.Action("PublicarComentario", "Eventos")",
+                    data: { "CodigoEvento": codigoEvento, "CodigoUsuario": "@usuario.codigo", "Comentario": areaComentario },
+                    type: "GET",
+                    contentType: 'html',
+                    beforeSend: function () {
+                        AjaxBegin();
+                    },
+                    complete: function () {
+                        AjaxComplete();
+                    },
+                    success: function (data, textStatus, jqXHR) {
+                        $('#divComentarios').html(data);
+                        $("#areaComentario").val("");
+                        mensagem("@Url.Action("Mensagem", "Home")", 1, "Sucesso", "Comentário efetuado com sucesso.", null);
+                    }
+                })
+            }
+        }
+        else
+        {
+            mensagem("@Url.Action("Mensagem", "Home")", 0, "Alerta", "Você precisa estar logado para comentar.", null);
+        }
+    }
+
+    function RemoverComentario(CodigoComentario, CodigoEvento)
+    {
+        if ("@Session["usuario"]" != "")
+        {
+            mensagemDecisao("@Url.Action("MensagemDecisao", "Home")", 0, "Alerta", "Você realmente deseja remover o comentário?", function () {
+                $("#dvModalMensagemDecisao").modal('hide');
+                $.ajax({
+                    url: "@Url.Action("RemoverComentario", "Eventos")",
+                    data: { "CodigoComentario": CodigoComentario, "CodigoEvento": CodigoEvento },
+                    type: "GET",
+                    contentType: 'html',
+                    beforeSend: function () {
+                        AjaxBegin();
+                    },
+                    complete: function () {
+                        AjaxComplete();
+                    },
+                    success: function (data, textStatus, jqXHR) {
+                        $('#divComentarios').html(data);
+                        $('div').removeClass("modal-backdrop fade in");
+                        mensagem("@Url.Action("Mensagem", "Home")", 1, "Sucesso", "Comentário removido com sucesso.", null);
+                    }
+                })
+            });
+        }
+        else
+        {
+            mensagem("@Url.Action("Mensagem", "Home")", 0, "Alerta", "Você precisa estar logado para remover o comentário.", null);
+        }
+    }
+</script>

@@ -1,0 +1,183 @@
+﻿@model List<GerenciadorEventos.Entidades.Evento>
+@{
+    ViewBag.Title = "Gerenciar Inscrições";
+
+    GerenciadorEventos.Entidades.Usuario usuario = new GerenciadorEventos.Entidades.Usuario();
+    if (Session["usuario"] != null)
+    {
+        usuario = (GerenciadorEventos.Entidades.Usuario)Session["usuario"];
+    }
+}
+
+<h2>Gerenciar Inscrições</h2>
+
+<div class="row">
+    <div class="col-md-12">
+        <table id="tbEventos" class="table table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th>Ação</th>
+                    <th>Nome do Evento</th>
+                    <th>Data Evento</th>
+                    <th>Vagas Disponíveis</th>
+                    <th>Status</th>
+                    <th>Relação</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (GerenciadorEventos.Entidades.Evento evento in Model)
+                {
+                    int vagasDisponiveis = 0;
+                    if (evento.vagas != null)
+                    {
+                        vagasDisponiveis = evento.vagas.Value - evento.inscritos;
+                    }
+                    <tr>
+                        <td>
+                            <a href="@Url.Action("VisualizarEvento", "Eventos", new { CodigoEvento = evento.codigo})" data-toggle="tooltip" data-placement="top" title="Visualizar Evento">
+                                <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                            </a>
+
+                            @if (evento.ativo == 'A' && evento.dataHoraInicioInscricao <= DateTime.Now && evento.dataHoraFimInscricao >= DateTime.Now)
+                            {
+                                if (usuario.eventosInscritos.Where(m => m.evento.codigo == evento.codigo).ToList().Count > 0)
+                                {
+                                    <a data-ajax="true" data-ajax-method="GET" data-ajax-loading="#loading" data-ajax-success="OnSuccessCancelarInscricao" data-ajax-failure="OnFailureCancelarInscricao" href="@Url.Action("CancelarInscricao", "Gerenciar", new { CodigoEvento = evento.codigo, CodigoUsuario = usuario.codigo })" data-toggle="tooltip" data-placement="top" title="Cancelar Inscrição">
+                                        <span class="glyphicon glyphicon-ban-circle" aria-hidden="true" style="color:red;"></span>
+                                    </a>
+                                }
+                            }
+
+                            @if (evento.organizador.codigo == usuario.codigo)
+                            {
+                                <a href="@Url.Action("VisualizarInscritos", "Gerenciar", new { CodigoEvento = evento.codigo })" class=" lnkacao" data-toggle="tooltip" data-placement="top" title="Visualizar Inscritos">
+                                    <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>
+                                </a>
+                            }
+
+                            @if (evento.organizador.codigo == usuario.codigo)
+                            {
+                                <a href="@Url.Action("GerarCracha", "Gerenciar", new { CodigoEvento = evento.codigo })" class=" lnkacao" data-toggle="tooltip" data-placement="top" title="Gerar Crachas">
+                                    <span class="fa fa-file-pdf-o" aria-hidden="true"></span>
+                                </a>
+                                <a href="@Url.Action("Relatorios", "Gerenciar", new { CodigoEvento = evento.codigo })" class=" lnkacao" data-toggle="tooltip" data-placement="top" title="Relatórios">
+                                    <span class="fa fa-pie-chart" aria-hidden="true"></span>
+                                </a>
+                                <a href="@Url.Action("EscreverEmail", "Gerenciar", new { CodigoEvento = evento.codigo })" class=" lnkacao" data-toggle="tooltip" data-placement="top" title="Enviar E-mail">
+                                    <span class="fa fa-envelope" aria-hidden="true"></span>
+                                </a>
+                            }
+
+                            @if (evento.ativo == 'A' && evento.dataHoraFim <= DateTime.Now)
+                            {
+                                if (evento.organizador.codigo == usuario.codigo)
+                                {
+                                    <a href="@Url.Action("AtribuirPresencaView", "Gerenciar", new { CodigoEvento = evento.codigo })" class=" lnkacao" data-toggle="tooltip" data-placement="top" title="Atribuir Presença">
+                                        <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
+                                    </a>
+                                    <a href="@Url.Action("GerarCertificado", "Gerenciar", new { CodigoEvento = evento.codigo })" class=" lnkacao" data-toggle="tooltip" data-placement="top" title="Gerar Certificado">
+                                        <span class="fa fa-file-text" aria-hidden="true"></span>
+                                    </a>
+                                }
+
+                                if (usuario.eventosInscritos.Where(m => m.evento.codigo == evento.codigo).ToList().Count > 0)
+                                {
+                                    if (usuario.eventosInscritos.Where(m => m.evento.codigo == evento.codigo).FirstOrDefault().statusPresenca == "Presente")
+                                    {
+                                        <a href="@Url.Action("GerarCertificadoUsuario", "Gerenciar", new { CodigoEvento = evento.codigo, CodigoUsuario = usuario.codigo })" class=" lnkacao" data-toggle="tooltip" data-placement="top" title="Gerar Certificado">
+                                            <span class="fa fa-file" aria-hidden="true"></span>
+                                        </a>
+                                    }
+                                }
+                            }
+                        </td>
+                        <td>@evento.nome</td>
+                        <td>@evento.dataHoraInicio - @evento.dataHoraFim</td>
+                        <td>@vagasDisponiveis</td>
+                        <td>
+                            @if (evento.ativo == 'I')
+                            {
+                                @:Cancelado
+                            }
+                            else if (evento.dataHoraInicio <= DateTime.Now && evento.dataHoraFim <= DateTime.Now)
+                            {
+                                @:Finalizado
+                            }
+                            else if (evento.dataHoraInicio <= DateTime.Now && evento.dataHoraFim >= DateTime.Now)
+                            {
+                                @:Em Andamento
+                            }
+                            else if (evento.dataHoraInicioInscricao <= DateTime.Now && evento.dataHoraFimInscricao <= DateTime.Now)
+                            {
+                                @:Fim do Período de Inscrições
+                            }
+                            else if (evento.dataHoraInicioInscricao <= DateTime.Now && evento.dataHoraFimInscricao >= DateTime.Now)
+                            {
+                                @:Inscrições em Andamento
+                            }
+                            else
+                            {
+                                @:Aguardando Período de Inscrições
+                            }
+                        </td>
+                        <td>@evento.relacionamento</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function OnSuccessCancelarInscricao(Data, strStatus, XMLRequest) {
+        var objJson = JSON.parse(JSON.stringify(Data));
+        if (objJson.act == 1) {
+            mensagem("@Url.Action("Mensagem", "Home")", 1, "Sucesso", objJson.mensagem, null);
+            $(document).on('hide.bs.modal', '#dvModalMensagem', function () {
+                window.location.href = "@Url.Action("Index","Gerenciar")";
+            });
+        }
+        else {
+            mensagem("@Url.Action("Mensagem", "Home")", 0, "Erro", objJson.mensagem, null);
+        }
+    }
+
+    function OnFailureCancelarInscricao(event, xhr, setting, thrownError) {
+        var objJson = JSON.parse(JSON.stringify(xhr));
+        mensagem("@Url.Action("Mensagem", "Home")", 0, "Erro", objJson.mensagem, null);
+    };
+
+    $(document).ready(function () {
+        $('#tbEventos').DataTable(
+            {
+                "language": {
+                    "decimal": "",
+                    "emptyTable": "Não há dados disponiveis na tabela",
+                    "info": "Mostrando _START_ de _END_ da(s) _TOTAL_ entradas",
+                    "infoEmpty": "Mostrando 0 de 0 das 0 entradas",
+                    "infoFiltered": "(filtrando para _MAX_ total entradas)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Visualizar _MENU_ linhas",
+                    "loadingRecords": "Carregando...",
+                    "processing": "Processando...",
+                    "search": "Procurar:",
+                    "zeroRecords": "Não há registros encontrados",
+                    "paginate": {
+                        "first": "Primeiro",
+                        "last": "Ultimo",
+                        "next": "Próximo",
+                        "previous": "Anterior"
+                    },
+                    "aria": {
+                        "sortAscending": ": ative para classificar coluna ascendente",
+                        "sortDescending": ": ative para classificar coluna descendente"
+                    }
+                }
+            }
+            );
+
+    });
+</script>
+
+

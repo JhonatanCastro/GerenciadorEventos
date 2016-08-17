@@ -1,0 +1,110 @@
+﻿@model List<GerenciadorEventos.Entidades.Usuario>
+@{
+    ViewBag.Title = "Relatórios";
+
+    GerenciadorEventos.Entidades.Evento evento = (GerenciadorEventos.Entidades.Evento)ViewBag.Evento;
+
+    double? valorTotal = evento.valor * Model.Where(m => m.statusInscricao != "Cancelada").ToList().Count;
+}
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+<h2>Relatórios do Evento @evento.nome</h2>
+
+<!--Relatorio numero de Total recebido de evento pago-->
+@if (evento.pago == true)
+{
+    <div class="row">
+        <div class="col-md-12" style="font-size:18px;">
+            <b>Receita Total Atual do Evento: </b>@string.Format("{0:C}", valorTotal).
+        </div>
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-5" style="text-align:center;">
+        <!--Relatorio numero de inscritos por cancelados-->
+        <div id="piechart" style="width: 500px; height: 500px;"></div>
+    </div>
+    @if (Model.Where(m => m.statusInscricao == "Presente").ToList().Count != 0 || Model.Where(m => m.statusInscricao == "Ausente").ToList().Count != 0)
+    {
+        <div class="col-md-5" style="text-align:center;">
+            <!--Relatorio numero de presentes por ausentes-->
+            <div id="piechart2" style="width: 500px; height: 500px;"></div>
+        </div>
+    }
+    <div class="col-md-6" style="text-align:center;">
+        <!--Relatorio numero de inscritos por estado-->
+        <div id="columnchart" style="width: 700px; height: 500px;"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    google.charts.load('current', { 'packages': ['corechart'] });
+    google.charts.setOnLoadCallback(drawChart);
+
+    @if (Model.Where(m => m.statusInscricao == "Presente").ToList().Count != 0 || Model.Where(m => m.statusInscricao == "Ausente").ToList().Count != 0)
+    {
+        @:google.charts.setOnLoadCallback(drawChart2);
+    }
+
+    google.charts.setOnLoadCallback(drawChart3);
+
+    function drawChart() {
+
+        var data = google.visualization.arrayToDataTable([
+            ['Status', 'Quantidade'],
+            ['Inscritos', @Model.Where(m => m.statusInscricao != "Cancelada").ToList().Count],
+            ['Cancelados', @Model.Where(m => m.statusInscricao == "Cancelada").ToList().Count]
+        ]);
+
+        var options = {
+            title: 'Número de inscritos e cancelados'
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+        chart.draw(data, options);
+    }
+
+    function drawChart2() {
+
+        var data = google.visualization.arrayToDataTable([
+            ['Status', 'Quantidade'],
+            ['Presentes', @Model.Where(m => m.statusInscricao == "Presente").ToList().Count],
+            ['Ausentes', @Model.Where(m => m.statusInscricao == "Ausente").ToList().Count]
+        ]);
+
+        var options = {
+            title: 'Número de presentes e ausentes'
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart2'));
+
+        chart.draw(data, options);
+    }
+
+    function drawChart3() {
+        var data = google.visualization.arrayToDataTable([
+          ["Estado", "Número de Inscritos"],
+          @{
+              List<GerenciadorEventos.Entidades.Usuario> lstUsuario = Model.GroupBy(m => m.endereco.uf.uf).Select(j => new GerenciadorEventos.Entidades.Usuario()
+              {
+                  codigo = j.First().codigo,
+                  endereco = j.First().endereco
+              }).ToList();
+
+              foreach (GerenciadorEventos.Entidades.Usuario usuario in lstUsuario)
+              {
+                  @:["@usuario.endereco.uf.uf", @Model.Where(m => m.endereco.uf.uf == usuario.endereco.uf.uf && m.statusInscricao != "Cancelada").ToList().Count],
+              }
+          }
+        ]);
+
+        var options = {
+            title: "Número de inscritos por estado"
+        };
+        var chart = new google.visualization.ColumnChart(document.getElementById("columnchart"));
+        chart.draw(data, options);
+    }
+</script>

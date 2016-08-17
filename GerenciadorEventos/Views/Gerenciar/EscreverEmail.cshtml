@@ -1,0 +1,66 @@
+﻿@model GerenciadorEventos.Entidades.Email
+@{
+    ViewBag.Title = "Enviar Email";
+
+    AjaxOptions ajaxEmail = new AjaxOptions();
+    ajaxEmail.HttpMethod = "POST";
+    ajaxEmail.InsertionMode = InsertionMode.Replace;
+    ajaxEmail.OnBegin = "AjaxBegin";
+    ajaxEmail.OnComplete = "AjaxComplete";
+    ajaxEmail.OnSuccess = "OnSuccessEmail";
+    ajaxEmail.OnFailure = "OnFailureEmail";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@using (Ajax.BeginForm("EnviarEmail", "Gerenciar", ajaxEmail, new { @class = "form-horizontal", role = "formEmail" }))
+{
+    @Html.AntiForgeryToken()
+    <h4>Descreva a mensagem a ser enviada para todos os inscritos do evento @Model.evento.nome.</h4>
+    <hr />
+
+    @Html.HiddenFor(m => m.codigo)
+    @Html.HiddenFor(m => m.evento.codigo)
+    @Html.HiddenFor(m => m.usuario.codigo)
+    <div class="form-group">
+        @Html.LabelFor(m => m.titulo, new { @class = "col-md-2 control-label" })
+        <div class="col-md-8">
+            @Html.TextBoxFor(m => m.titulo, new { @class = "form-control", maxlength="100" })
+            @Html.ValidationMessageFor(m => m.titulo)
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.mensagem, new { @class = "col-md-2 control-label" })
+        <div class="col-md-8">
+            @Html.TextAreaFor(m => m.mensagem, new { @class = "form-control", rows = "15", maxlength = "4000" })
+            @Html.ValidationMessageFor(m => m.mensagem)
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-8 col-md-2">
+            <input type="submit" class="btn btn-success" value="Enviar" style="float:right;" />
+        </div>
+    </div>
+}
+
+<script>
+    function OnSuccessEmail(Data, strStatus, XMLRequest) {
+        var objJson = JSON.parse(JSON.stringify(Data));
+        if (objJson.act == 1) {
+            mensagem("@Url.Action("Mensagem", "Home")", 1, "Sucesso", objJson.mensagem, null);
+            $(document).on('hide.bs.modal', '#dvModalMensagem', function () {
+                window.location.href = "@Url.Action("Index","Gerenciar")";
+            });
+        }
+        else {
+            mensagem("@Url.Action("Mensagem", "Home")", 0, "Erro", objJson.mensagem, null);
+        }
+    };
+
+    function OnFailureEmail(event, xhr, setting, thrownError) {
+        var objJson = JSON.parse(JSON.stringify(xhr));
+        mensagem("@Url.Action("Mensagem", "Home")", 0, "Erro", objJson.mensagem, null);
+    };
+</script>

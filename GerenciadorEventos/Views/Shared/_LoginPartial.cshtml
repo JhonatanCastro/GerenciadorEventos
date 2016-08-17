@@ -1,0 +1,44 @@
+﻿@{ 
+    GerenciadorEventos.Entidades.Usuario usuario = new GerenciadorEventos.Entidades.Usuario();
+    usuario = (GerenciadorEventos.Entidades.Usuario)Session["usuario"];
+}
+@if (usuario != null)
+{
+    <ul class="nav navbar-nav navbar-right">
+        <li role="presentation" class="dropdown">
+            <a href="" class="dropdown-toggle" id="drop" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                <span class="glyphicon glyphicon-user" data-toggle="tooltip" data-placement="bottom" title="Área do usuário" style="font-size: 18px;"></span>
+            </a>
+            <ul class="dropdown-menu" id="menu1" aria-labelledby="drop">
+                <li>
+                    @Html.ActionLink(usuario.nome, "GerenciarUsuario", "Acesso", new { codigoUsuario = usuario.codigo }, htmlAttributes: new { title = "Alterar Informações do Usuário" })
+                </li>
+                <li role="separator" class="divider">
+                </li>
+                <li>
+                    <a href="@Url.Action("Sair", "Acesso")" id="Sair" style="text-align:right;">
+                        Sair
+                    </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+        @*using (Html.BeginForm("Sair", "Acesso", FormMethod.Post, new { id = "Sair", @class = "navbar-right" }))
+            {
+            @Html.AntiForgeryToken()
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    @Html.ActionLink("Olá " + usuario.nome + "!", "GerenciarUsuario", "Acesso", new { codigoUsuario = usuario.codigo }, htmlAttributes: new { title = "Alterar Informações do Usuário" })
+                </li>
+                <li><a href="javascript:document.getElementById('Sair').submit()">Sair</a></li>
+            </ul>
+            }*@
+        }
+        else
+        {
+        <ul class="nav navbar-nav navbar-right">
+            <li>@Html.ActionLink("Registrar", "Registrar", "Acesso", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+            <li>@Html.ActionLink("Entrar", "Entrar", "Acesso", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+        </ul>
+        }

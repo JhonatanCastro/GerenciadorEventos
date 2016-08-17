@@ -1,0 +1,144 @@
+﻿@model List<GerenciadorEventos.Entidades.Evento>
+@{
+    ViewBag.Title = "Página Inicial";
+
+    AjaxOptions ajaxEventos = new AjaxOptions();
+    ajaxEventos.OnBegin = "AjaxBegin";
+    ajaxEventos.OnComplete = "AjaxComplete";
+    ajaxEventos.HttpMethod = "POST";
+    ajaxEventos.UpdateTargetId = "divEventos";
+    ajaxEventos.InsertionMode = InsertionMode.Replace;
+}
+
+@*<div class="jumbotron">
+    <h1>ASP.NET</h1>
+    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
+    <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+</div>*@
+
+<style>
+    @@media (max-width: 992px) {
+        #btnBuscar {
+            margin-top:10px;
+        }
+    }
+    .control-label{
+        margin-top:5px;
+        text-align:right;
+    }
+</style>
+
+@using (Ajax.BeginForm("FiltrarEventos", "Home", ajaxEventos))
+{ 
+<div class="row" style="margin-top:20px;">
+    <div class="col-md-12 form-group">
+        <label class = "col-md-1 control-label">Estados</label>
+        <div class="col-md-1">
+            @Html.DropDownList("estados", new SelectList(ViewBag.Estados, "codigo", "uf"), "", new { @class = "form-control" })
+        </div>
+    @*</div>
+    <div class="form-group">*@
+        <label class = "col-md-1 control-label">Categoria</label>
+        <div class="col-md-3">
+            @Html.DropDownList("categoria", new SelectList(ViewBag.Categorias, "codigo", "categoria"), "", new { @class = "form-control" })
+        </div>
+    @*</div>
+    <div class="form-group">*@
+        <label class = "col-md-2 control-label">Nome Evento</label>
+        <div class="col-md-3">
+            @Html.TextBox("nomeEvento", "", new { @class = "form-control" })
+        </div>
+    @*</div>
+    <div class="form-group">*@
+        <div class="col-md-1">
+            <div class="form-group">
+                <button type="submit" class="btn btn-default" id="btnBuscar">Buscar</button>
+            </div>
+        </div>
+    </div>
+</div>
+}
+
+
+<div class="row" id="divEventos">
+    <div class="form-group">
+        @foreach (GerenciadorEventos.Entidades.Evento evento in Model)
+        {
+            <div class="col-md-4">
+                <div class="col-centered col-event-box">
+                    <div class="event-box event-box-autofit onthefly-ripple" data-color="#00aeef">
+                        <a class="event-box-link" href="@Url.Action("VisualizarEvento","Eventos", new { CodigoEvento = evento.codigo })">
+                            <div class="event-image-box">
+                                @if (evento.strImagem != "")
+                                {
+                                    @*<img width="328" height="129" src="@evento.strImagem" />*@
+                                    <img width="328" height="129" src="@Url.Action("ExibirImagem","Home", new { CodigoEvento = evento.codigo })" />
+                                }
+                                else
+                                {
+                                    <img width="328" height="129" src="~/Content/imagens/fotonaodisponivel.jpg" />
+                                }
+                            </div>
+                            <div class="event-name-box ">
+                                <div class="text-middle text-center">
+                                    @evento.descricao
+                                </div>
+                            </div>
+                            <div class="calendar-box">
+                                <div class="calendar-month">
+                                    @evento.dataHoraInicio.Value.ToString("MMM")
+                                </div>
+                                <div class="calendar-day">
+                                    @evento.dataHoraInicio.Value.ToString("dd")
+                                </div>
+                            </div>
+                            <div class="event-local-box">
+                                <div class="uppercase line">
+                                    <strong>@evento.nome</strong>
+                                </div>
+                                <div class="line">
+                                    <i class="fa fa-clock-o color-grey" style="padding-right: 2px;"></i>@evento.dataHoraInicio.Value.ToString("HH")<span>h</span><i class="fa fa-map-marker color-grey" style="padding: 0 2px 0 4px;"></i>@evento.endereco.cidade, @evento.endereco.uf.uf
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+
+
+@*<div class="form-group">
+    <div class="col-md-4">
+        <div class="col-centered col-event-box">
+            <div class="event-box event-box-autofit onthefly-ripple" data-color="#00aeef">
+                <a class="event-box-link" target="blank" href="https://www.sympla.com.br/gestao-de-indicadores-de-desempenho-na-administracao-publica-e-privada__56060">
+                    <div class="event-image-box" style="background-image: url('http://d1gkntzr8mxq7s.cloudfront.net/56b34aac7e67c-xs.jpg');"></div>
+                    <div class="event-name-box ">
+                        <div class="text-middle text-center">
+                            Gestão de Indicadores de Desempenho na Administração Pública e Privada
+                        </div>
+                    </div>
+                    <div class="calendar-box">
+                        <div class="calendar-month">
+                            Jul
+                        </div>
+                        <div class="calendar-day">
+                            7
+                        </div>
+                    </div>
+                    <div class="event-local-box">
+                        <div class="uppercase line">
+                            <strong>Corporate Tower Center</strong>
+                        </div>
+                        <div class="line">
+                            <i class="fa fa-clock-o color-grey" style="padding-right: 2px;"></i>08h<i class="fa fa-map-marker color-grey" style="padding: 0 2px 0 4px;"></i>Natal, RN
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>*@

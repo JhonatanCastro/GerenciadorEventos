@@ -1,0 +1,52 @@
+﻿@model List<GerenciadorEventos.Entidades.Conteudo>
+
+@if (Model.Count > 0)
+{
+    <div class="row">
+        <div class="col-md-10">
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <th width="20%">Tipo de Conteúdo</th>
+                        <th width="40%">Descrição</th>
+                        <th width="20%">Anexo</th>
+                        <th width="20%">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int contador = 0;
+                        foreach (GerenciadorEventos.Entidades.Conteudo conteudo in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @conteudo.tipoConteudo
+                                </td>
+                                <td>
+                                    @conteudo.descricao
+                                </td>
+                                <td>
+                                    <a href="@Url.Action("DownloadAnexo","Eventos", new { nomeAnexo = conteudo.nomeAnexo })" class="lnkAcao">
+                                        <span class="fa fa-file-o" style="font-size:15px;">
+                                            @conteudo.nomeAnexo
+                                        </span>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a data-ajax="true" data-ajax-method="POST" data-ajax-loading="" data-ajax-begin="AjaxBegin" data-ajax-complete="AjaxComplete" data-ajax-success="" data-ajax-update="#divConteudo" data-ajax-mode="replace" href="@Url.Action("RemoverConteudo", "Eventos",new { posicao = contador })">
+                                        <span class="glyphicon glyphicon-remove" aria-hidden="true" style="color:red;"></span>
+                                    </a>
+                                </td>
+                            </tr>
+                            contador++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+else
+{
+    <h4>Não há conteúdo informado.</h4>
+}

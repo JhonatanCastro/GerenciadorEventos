@@ -1,0 +1,271 @@
+﻿@model GerenciadorEventos.Entidades.Usuario
+@{
+    ViewBag.Title = "Registrar";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@using (Html.BeginForm("SalvarCadastro", "Acesso", FormMethod.Post, new { @class = "form-horizontal", role = "form", id="formRegistrar" }))
+{
+    @Html.AntiForgeryToken()
+    <h4>Criar uma nova conta.</h4>
+    <hr />
+        //@Html.ValidationSummary("", new { @class = "text-danger" })
+        @Html.HiddenFor(m => m.codigo)
+        @Html.HiddenFor(m => m.endereco.codigo)
+        @Html.HiddenFor(m => m.ativo)
+        <div class="form-group">
+            @Html.LabelFor(m => m.nome, new { @class = "col-md-2 control-label" })
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.nome, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.nome)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.rg, new { @class = "col-md-2 control-label" })
+            <div class="col-md-3">
+                @Html.TextBoxFor(m => m.rg, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.rg)
+            </div>
+
+            @Html.LabelFor(m => m.cpf, new { @class = "col-md-2 control-label" })
+            <div class="col-md-3">
+                @Html.TextBoxFor(m => m.cpf, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.cpf)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.endereco.logradouro, new { @class = "col-md-2 control-label" })
+            <div class="col-md-3">
+                @Html.TextBoxFor(m => m.endereco.logradouro, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.endereco.logradouro)
+            </div>
+
+            @Html.LabelFor(m => m.endereco.numero, new { @class = "col-md-1 control-label" })
+            <div class="col-md-1">
+                @Html.TextBoxFor(m => m.endereco.numero, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.endereco.numero)
+            </div>
+
+            @Html.LabelFor(m => m.endereco.bairro, new { @class = "col-md-1 control-label" })
+            <div class="col-md-2">
+                @Html.TextBoxFor(m => m.endereco.bairro, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.endereco.bairro)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.endereco.cidade, new { @class = "col-md-2 control-label" })
+            <div class="col-md-3">
+                @Html.TextBoxFor(m => m.endereco.cidade, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.endereco.cidade)
+            </div>
+
+            @Html.LabelFor(m => m.endereco.cep, new { @class = "col-md-1 control-label" })
+            <div class="col-md-2">
+                @Html.TextBoxFor(m => m.endereco.cep, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.endereco.cep)
+            </div>
+
+            @Html.LabelFor(m => m.endereco.uf.codigo, new { @class = "col-md-1 control-label" })
+            <div class="col-md-1">
+                @Html.DropDownListFor(m => m.endereco.uf.codigo, new SelectList(ViewBag.UF, "codigo", "uf"), "", new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.endereco.uf.codigo)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.telefone, new { @class = "col-md-2 control-label" })
+            <div class="col-md-3">
+                @Html.TextBoxFor(m => m.telefone, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.telefone)
+            </div>
+
+            @Html.LabelFor(m => m.email, new { @class = "col-md-2 control-label" })
+            <div class="col-md-3">
+                @Html.TextBoxFor(m => m.email, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.email)
+            </div>
+        </div>
+
+        if (Session["usuario"] == null)
+        {
+            <div class="form-group">
+                @Html.LabelFor(m => m.nivelAcesso.codigo, new { @class = "col-md-2 control-label" })
+                <div class="col-md-3">
+                    @Html.DropDownListFor(m => m.nivelAcesso.codigo, new SelectList(ViewBag.NivelAcesso, "codigo", "nivelAcesso"), "", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.nivelAcesso.codigo)
+                </div>
+            </div>
+        }
+        else
+        {
+            @Html.HiddenFor(m => m.nivelAcesso.codigo)
+        }
+
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.senha, new { @class = "col-md-2 control-label" })
+            <div class="col-md-3">
+                @Html.PasswordFor(m => m.senha, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.senha)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.confirmasenha, new { @class = "col-md-2 control-label" })
+            <div class="col-md-3">
+                @Html.PasswordFor(m => m.confirmasenha, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.confirmasenha)
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-8" style="text-align:right;">
+                <input type="submit" class="btn btn-success" value="Registrar" />
+            </div>
+        </div>
+}
+
+<script>
+    jQuery.validator.addMethod("cpf", function (value, element) {
+        value = jQuery.trim(value);
+
+        value = value.replace('.', '');
+        value = value.replace('.', '');
+        cpf = value.replace('-', '');
+        while (cpf.length < 11) cpf = "0" + cpf;
+        var expReg = /^0+$|^1+$|^2+$|^3+$|^4+$|^5+$|^6+$|^7+$|^8+$|^9+$/;
+        var a = [];
+        var b = new Number;
+        var c = 11;
+        for (i = 0; i < 11; i++) {
+            a[i] = cpf.charAt(i);
+            if (i < 9) b += (a[i] * --c);
+        }
+        if ((x = b % 11) < 2) { a[9] = 0 } else { a[9] = 11 - x }
+        b = 0;
+        c = 11;
+        for (y = 0; y < 10; y++) b += (a[y] * c--);
+        if ((x = b % 11) < 2) { a[10] = 0; } else { a[10] = 11 - x; }
+
+        var retorno = true;
+        if ((cpf.charAt(9) != a[9]) || (cpf.charAt(10) != a[10]) || cpf.match(expReg)) retorno = false;
+
+        return this.optional(element) || retorno;
+
+    });
+
+    jQuery.validator.addMethod("confirmasenha", function (value, element) {
+        value = jQuery.trim(value);
+        var retorno = true;
+        var senha = $("#senha").val();
+
+        if (value != senha) {
+            retorno = false;
+        }
+
+        return retorno;
+    });
+
+    $("#formRegistrar").validate({
+        rules: {
+            'nome': {
+                required: true
+            },
+            'rg': {
+                required: true
+            },
+            'cpf': {
+                required: true,
+                cpf: true
+            },
+            'endereco.logradouro': {
+                required: true
+            },
+            'endereco.numero': {
+                required: true
+            },
+            'endereco.bairro': {
+                required: true
+            },
+            'endereco.cidade': {
+                required: true
+            },
+            'endereco.cep': {
+                required: true
+            },
+            'endereco.uf.codigo': {
+                required: true
+            },
+            'telefone': {
+                required: true
+            },
+            'email': {
+                required: true,
+                email: true
+            },
+            'nivelAcesso.codigo': {
+                required: true
+            },
+            'senha': {
+                required: true
+            },
+            'confirmasenha': {
+                required: true,
+                confirmasenha: true
+            }
+        },
+        messages: {
+            'nome': {
+                required: "Informe o nome"
+            },
+            'rg': {
+                required: "Informe o RG"
+            },
+            'cpf': {
+                required: "Informe o CPF",
+                cpf: "Informe um CPF válido"
+            },
+            'endereco.logradouro': {
+                required: "Informe o logradouro"
+            },
+            'endereco.numero': {
+                required: "Informe o número"
+            },
+            'endereco.bairro': {
+                required: "Informe o bairro"
+            },
+            'endereco.cidade': {
+                required: "Informe a cidade"
+            },
+            'endereco.cep': {
+                required: "Informe o cep"
+            },
+            'endereco.uf.codigo': {
+                required: "Informe o estado"
+            },
+            'telefone': {
+                required: "Informe o telefone"
+            },
+            'email': {
+                required: "Informe o e-mail",
+                email: "Informe um e-mail válido"
+            },
+            'nivelAcesso.codigo': {
+                required: "Informe o nível de acesso"
+            },
+            'senha': {
+                required: "Informe a senha"
+            },
+            'confirmasenha': {
+                required: "Informe a confirmação da senha",
+                confirmasenha: "A senha e a confirmação da senha são diferentes"
+            }
+        }
+    });
+
+    //Mascaras
+    $("#cpf").mask("999.999.999-99");
+</script>

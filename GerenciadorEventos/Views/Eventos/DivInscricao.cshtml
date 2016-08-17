@@ -1,0 +1,74 @@
+﻿@model GerenciadorEventos.Entidades.Evento
+@{
+    Layout = "";
+
+    GerenciadorEventos.Entidades.Usuario usuario = new GerenciadorEventos.Entidades.Usuario();
+    if (Session["usuario"] != null)
+    {
+        usuario = (GerenciadorEventos.Entidades.Usuario)Session["usuario"];
+    }
+
+    int vagasDisponiveis = 0;
+    if (Model.vagas != null)
+    {
+        vagasDisponiveis = Model.vagas.Value - Model.inscritos;
+    }
+}
+
+@if (Session["usuario"] != null)
+{
+
+    if (Model.dataHoraFimInscricao <= DateTime.Now)
+    {
+        <a class="btn btn-warning mo-popover btn-disabled btn-whitespace-normal" href="javascript:;">Inscrição indisponível</a>
+    }
+    else if (usuario.eventosInscritos.Where(m => m.evento.codigo == Model.codigo).ToList().Count > 0)
+    {
+        <a class="btn btn-danger mo-popover btn-disabled btn-whitespace-normal" onclick="CancelarInscricao('@Model.codigo','@usuario.codigo');">Cancelar Inscrição</a>
+    }
+    else if (Model.inscritos >= Model.vagas)
+    {
+        <a class="btn btn-warning mo-popover btn-disabled btn-whitespace-normal" href="javascript:;">Inscrição indisponível</a>
+    }
+    else if (Model.dataHoraInicio <= DateTime.Now)
+    {
+        <a class="btn btn-warning mo-popover btn-disabled btn-whitespace-normal" href="javascript:;">Nenhuma ação disponível</a>
+    }
+    else if (vagasDisponiveis == 0)
+    {
+        <a class="btn btn-warning mo-popover btn-disabled btn-whitespace-normal" href="javascript:;">Inscrição indisponível</a>
+    }
+    else
+    {
+        <a class="btn btn-success mo-popover btn-disabled btn-whitespace-normal" onclick="Inscricao(@Model.codigo);">Inscrever</a>
+    }
+}
+else
+{
+    if (Model.dataHoraFimInscricao <= DateTime.Now)
+    {
+        <a class="btn btn-warning mo-popover btn-disabled btn-whitespace-normal" href="javascript:;">Inscrição indisponível</a>
+    }
+    else if (Model.inscritos >= Model.vagas)
+    {
+        <a class="btn btn-warning mo-popover btn-disabled btn-whitespace-normal" href="javascript:;">Inscrição indisponível</a>
+    }
+    else if (Model.dataHoraInicio <= DateTime.Now)
+    {
+        <a class="btn btn-warning mo-popover btn-disabled btn-whitespace-normal" href="javascript:;">Nenhuma ação disponível</a>
+    }
+    else if (vagasDisponiveis == 0)
+    {
+        <a class="btn btn-warning mo-popover btn-disabled btn-whitespace-normal" href="javascript:;">Inscrição indisponível</a>
+    }
+    else
+    {
+        <a class="btn btn-success mo-popover btn-disabled btn-whitespace-normal" onclick="Inscricao(@Model.codigo);">Inscrever</a>
+    }
+}
+
+<script>
+    $(document).ready(function () {
+        $("#VagasDisponiveis").html("@vagasDisponiveis" + " vagas disponíveis");
+    });
+</script>

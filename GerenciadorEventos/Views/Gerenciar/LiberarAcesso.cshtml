@@ -1,0 +1,89 @@
+﻿@model List<GerenciadorEventos.Entidades.Usuario>
+@{
+    ViewBag.Title = "Liberar Acesso";
+}
+
+<h2>Liberar Acesso</h2>
+
+<div class="row">
+    <div class="col-md-12">
+        <table id="tbUsuario" class="table table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th>Ação</th>
+                    <th>Nome</th>
+                    <th>Nível Acesso Solicitado</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (GerenciadorEventos.Entidades.Usuario usuario in Model)
+                {
+                    <tr>
+                        <td>
+                            <a data-ajax="true" data-ajax-method="GET" data-ajax-loading="#loading" data-ajax-success="OnSuccessLiberarAcesso" data-ajax-failure="OnFailureLiberarAcesso" href="@Url.Action("AcaoLiberarAcesso", "Gerenciar", new { CodigoUsuario = usuario.codigo })" data-toggle="tooltip" data-placement="top" title="Liberar Acesso">
+                                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                            </a>
+                        </td>
+                        <td>@usuario.nome</td>
+                        <td>@usuario.nivelAcesso.nivelAcesso</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function OnSuccessLiberarAcesso(Data, strStatus, XMLRequest) {
+        var objJson = JSON.parse(JSON.stringify(Data));
+        if (objJson.act == 1) {
+            mensagem("@Url.Action("Mensagem", "Home")", 1, "Sucesso", objJson.mensagem, null);
+            $(document).on('hide.bs.modal', '#dvModalMensagem', function () {
+                window.location.href = "@Url.Action("LiberarAcesso", "Gerenciar")";
+            });
+        }
+        else {
+            mensagem("@Url.Action("Mensagem", "Home")", 0, "Erro", objJson.mensagem, null);
+        }
+    }
+
+    function OnFailureLiberarAcesso(event, xhr, setting, thrownError) {
+        var objJson = JSON.parse(JSON.stringify(xhr));
+        mensagem("@Url.Action("Mensagem", "Home")", 0, "Erro", objJson.mensagem, null);
+    };
+
+    $(document).ready(function () {
+        $('#tbUsuario').DataTable(
+            {
+                "language": {
+                    "decimal": "",
+                    "emptyTable": "Não há dados disponiveis na tabela",
+                    "info": "Mostrando _START_ de _END_ da(s) _TOTAL_ entradas",
+                    "infoEmpty": "Mostrando 0 de 0 das 0 entradas",
+                    "infoFiltered": "(filtrando para _MAX_ total entradas)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Visualizar _MENU_ linhas",
+                    "loadingRecords": "Carregando...",
+                    "processing": "Processando...",
+                    "search": "Procurar:",
+                    "zeroRecords": "Não há registros encontrados",
+                    "paginate": {
+                        "first": "Primeiro",
+                        "last": "Ultimo",
+                        "next": "Próximo",
+                        "previous": "Anterior"
+                    },
+                    "aria": {
+                        "sortAscending": ": ative para classificar coluna ascendente",
+                        "sortDescending": ": ative para classificar coluna descendente"
+                    }
+                }
+            }
+            );
+
+    });
+</script>
+
+
+

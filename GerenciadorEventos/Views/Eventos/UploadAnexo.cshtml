@@ -1,0 +1,19 @@
+﻿@{
+    string elemento = ViewBag.NomeAnexo;
+    elemento = elemento.Substring(0, elemento.IndexOf(".")).Replace(" ", "").Replace("(", "").Replace(")", "");
+}
+
+<div class="row" id="@elemento">
+    <div class="col-md-12">
+        <input type="hidden" name="nomeAnexo" value="@ViewBag.NomeAnexo" />
+        <a href="@Url.Action("DownloadAnexo","Eventos", new { nomeAnexo = ViewBag.NomeAnexo })" class="lnkAcao">
+            <span class="fa fa-file-o" style="font-size:15px;">
+                @ViewBag.NomeAnexo
+            </span>
+        </a> &nbsp;
+        <a href="javascript: return false;" onclick="onClickRemoveAnexo('#@elemento', '@ViewBag.NomeAnexo');" class="danger">
+            <span class="glyphicon glyphicon-remove" style="margin-top:10px;">
+            </span>
+        </a>
+    </div>
+</div>

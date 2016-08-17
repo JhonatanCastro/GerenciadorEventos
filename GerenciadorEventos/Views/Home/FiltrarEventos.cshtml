@@ -1,0 +1,47 @@
+﻿@model List<GerenciadorEventos.Entidades.Evento>
+
+<div class="form-group">
+    @foreach (GerenciadorEventos.Entidades.Evento evento in Model)
+    {
+        <div class="col-md-4">
+            <div class="col-centered col-event-box">
+                <div class="event-box event-box-autofit onthefly-ripple" data-color="#00aeef">
+                    <a class="event-box-link" href="@Url.Action("VisualizarEvento","Eventos", new { CodigoEvento = evento.codigo })">
+                        <div class="event-image-box">
+                            @if (evento.nomeImagem != "")
+                            {
+                                @*<img width="328" height="129" src="@evento.strImagem" />*@
+                                <img width="328" height="129" src="@Url.Action("ExibirImagem","Home", new { CodigoEvento = evento.codigo })" />
+                            }
+                            else
+                            {
+                                <img width="328" height="129" src="~/Content/imagens/fotonaodisponivel.jpg" />
+                            }
+                        </div>
+                        <div class="event-name-box ">
+                            <div class="text-middle text-center">
+                                @evento.descricao
+                            </div>
+                        </div>
+                        <div class="calendar-box">
+                            <div class="calendar-month">
+                                @evento.dataHoraInicio.Value.ToString("MMM")
+                            </div>
+                            <div class="calendar-day">
+                                @evento.dataHoraInicio.Value.ToString("dd")
+                            </div>
+                        </div>
+                        <div class="event-local-box">
+                            <div class="uppercase line">
+                                <strong>@evento.nome</strong>
+                            </div>
+                            <div class="line">
+                                <i class="fa fa-clock-o color-grey" style="padding-right: 2px;"></i>@evento.dataHoraInicio.Value.ToString("HH")<span>h</span><i class="fa fa-map-marker color-grey" style="padding: 0 2px 0 4px;"></i>@evento.endereco.cidade, @evento.endereco.uf.uf
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

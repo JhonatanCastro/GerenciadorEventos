@@ -1,0 +1,20 @@
+﻿@{
+    Layout = "";
+    string elemento = ViewBag.NomeImagem;
+    elemento = elemento.Substring(0, elemento.IndexOf(".")).Replace(" ", "").Replace("(", "").Replace(")", "");
+}
+
+<div class="row" id="@elemento">
+    <div class="col-md-12">
+        <input type="hidden" name="nomeImagem" value="@ViewBag.NomeImagem" />
+        <a href="@Url.Action("DownloadImagem","Eventos", new { nomeImagem = ViewBag.NomeImagem })" class="lnkAcao">
+            <span class="fa fa-file-o" style="font-size:15px;">
+                @ViewBag.NomeImagem
+            </span>
+        </a> &nbsp;
+        <a href="javascript: return false;" onclick="onClickRemoveImagem('#@elemento', '@ViewBag.NomeImagem');" class="danger">
+            <span class="glyphicon glyphicon-remove" style="margin-top:10px;">
+            </span>
+        </a>
+    </div>
+</div>

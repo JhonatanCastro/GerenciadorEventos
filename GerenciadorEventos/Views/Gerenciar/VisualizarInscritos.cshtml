@@ -1,0 +1,187 @@
+﻿@model List<GerenciadorEventos.Entidades.Usuario>
+@{
+    ViewBag.Title = "Visualizar Inscritos";
+
+    GerenciadorEventos.Entidades.Usuario usuario = new GerenciadorEventos.Entidades.Usuario();
+    if (Session["usuario"] != null)
+    {
+        usuario = (GerenciadorEventos.Entidades.Usuario)Session["usuario"];
+    }
+
+    GerenciadorEventos.Entidades.Evento evento = new GerenciadorEventos.Entidades.Evento();
+    evento = ViewBag.Evento;
+
+}
+
+<h2>Visualizar Inscritos - @evento.nome</h2>
+
+<div class="row">
+    <div class="col-md-12">
+        <table id="tbInscritos" class="table table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th>Ação</th>
+                    <th>Nome</th>
+                    <th>Data Inscrição</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (GerenciadorEventos.Entidades.Usuario inscrito in Model)
+                {
+                    <tr>
+                        <td>
+                            @if (evento.dataHoraInicio < DateTime.Now && evento.dataHoraFim < DateTime.Now)
+                            {
+                                if (inscrito.statusInscricao == "Inscrito")
+                                {
+                                    <a data-ajax="true" data-ajax-method="GET" data-ajax-loading="#loading" data-ajax-success="OnSuccessPresencaInscricao" data-ajax-failure="OnFailurePresencaInscricao" href="@Url.Action("AtribuirPresenca", "Gerenciar", new { CodigoEvento = evento.codigo, CodigoUsuario = inscrito.codigo, Atributo = "Presente" })" data-toggle="tooltip" data-placement="top" title="Marcar Presença de @inscrito.nome">
+                                        <span class="glyphicon glyphicon-ok-sign" aria-hidden="true" style="color:green;"></span>
+                                    </a>
+                                    <a data-ajax="true" data-ajax-method="GET" data-ajax-loading="#loading" data-ajax-success="OnSuccessAusenciaInscricao" data-ajax-failure="OnFailureAusenciaInscricao" href="@Url.Action("AtribuirPresenca", "Gerenciar", new { CodigoEvento = evento.codigo, CodigoUsuario = inscrito.codigo, Atributo = "Ausente" })" data-toggle="tooltip" data-placement="top" title="Marcar Ausência de @inscrito.nome">
+                                        <span class="glyphicon glyphicon-remove-sign" aria-hidden="true" style="color:red;"></span>
+                                    </a>
+                                }
+                            }
+                            @if (evento.dataHoraInicioInscricao < DateTime.Now && evento.dataHoraFimInscricao > DateTime.Now)
+                            {
+                                if (inscrito.statusInscricao == "Inscrito")
+                                {
+                                    <a data-ajax="true" data-ajax-method="GET" data-ajax-loading="#loading" data-ajax-success="OnSuccessCancelarInscricao" data-ajax-failure="OnFailureCancelarInscricao" href="@Url.Action("CancelarInscricao", "Gerenciar", new { CodigoEvento = evento.codigo, CodigoUsuario = inscrito.codigo })" data-toggle="tooltip" data-placement="top" title="Cancelar Inscrição de @inscrito.nome">
+                                        <span class="glyphicon glyphicon-ban-circle" aria-hidden="true" style="color:red;"></span>
+                                    </a>
+                                }
+                            }
+                        </td>
+                        <td>@inscrito.nome</td>
+                        <td>@inscrito.dataCadastro</td>
+                        <td>
+                            @{ 
+                                string cor = "";
+                                if (inscrito.statusInscricao == "Inscrito")
+                                {
+                                    cor = "green";
+                                }
+                                else if (inscrito.statusInscricao == "Cancelada")
+                                {
+                                    cor = "red";
+                                }
+                                else if (inscrito.statusInscricao == "Ausente")
+                                {
+                                    cor = "yellow";
+                                }
+                                else
+                                {
+                                    cor = "blue";
+                                }
+                            }
+                            
+                            <span style="color:@cor">
+                                @inscrito.statusInscricao
+                            </span>
+                        </td>   
+                    </tr> 
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <a href="@Url.Action("ListaPresenca", "Gerenciar", new { CodigoEvento = evento.codigo })" class="btn btn-primary">
+            Imprimir Lista de Presença
+        </a>
+    </div>
+</div>
+
+<script>
+    function OnSuccessPresencaInscricao(Data, strStatus, XMLRequest) {
+        var objJson = JSON.parse(JSON.stringify(Data));
+        if (objJson.act == 1) {
+            mensagem("@Url.Action("Mensagem", "Home")", 1, "Sucesso", objJson.mensagem, null);
+            $(document).on('hide.bs.modal', '#dvModalMensagem', function () {
+                window.location.href = "@Url.Action("VisualizarInscritos", "Gerenciar", new { CodigoEvento = evento.codigo })";
+            });
+        }
+        else {
+            mensagem("@Url.Action("Mensagem", "Home")", 0, "Erro", objJson.mensagem, null);
+        }
+    }
+
+    function OnFailurePresencaInscricao(event, xhr, setting, thrownError) {
+        var objJson = JSON.parse(JSON.stringify(xhr));
+        mensagem("@Url.Action("Mensagem", "Home")", 0, "Erro", objJson.mensagem, null);
+    };
+
+    function OnSuccessAusenciaInscricao(Data, strStatus, XMLRequest) {
+        var objJson = JSON.parse(JSON.stringify(Data));
+        if (objJson.act == 1) {
+            mensagem("@Url.Action("Mensagem", "Home")", 1, "Sucesso", objJson.mensagem, null);
+            $(document).on('hide.bs.modal', '#dvModalMensagem', function () {
+                window.location.href = "@Url.Action("VisualizarInscritos", "Gerenciar", new { CodigoEvento = evento.codigo })";
+            });
+        }
+        else {
+            mensagem("@Url.Action("Mensagem", "Home")", 0, "Erro", objJson.mensagem, null);
+        }
+    }
+
+    function OnFailureAusenciaInscricao(event, xhr, setting, thrownError) {
+        var objJson = JSON.parse(JSON.stringify(xhr));
+        mensagem("@Url.Action("Mensagem", "Home")", 0, "Erro", objJson.mensagem, null);
+    };
+
+    function OnSuccessCancelarInscricao(Data, strStatus, XMLRequest) {
+        var objJson = JSON.parse(JSON.stringify(Data));
+        if (objJson.act == 1) {
+            mensagem("@Url.Action("Mensagem", "Home")", 1, "Sucesso", objJson.mensagem, null);
+            $(document).on('hide.bs.modal', '#dvModalMensagem', function () {
+                window.location.href = "@Url.Action("VisualizarInscritos", "Gerenciar", new { CodigoEvento = evento.codigo })";
+            });
+        }
+        else {
+            mensagem("@Url.Action("Mensagem", "Home")", 0, "Erro", objJson.mensagem, null);
+        }
+    }
+
+    function OnFailureCancelarInscricao(event, xhr, setting, thrownError) {
+        var objJson = JSON.parse(JSON.stringify(xhr));
+        mensagem("@Url.Action("Mensagem", "Home")", 0, "Erro", objJson.mensagem, null);
+    };
+
+    $(document).ready(function () {
+        $('#tbInscritos').DataTable(
+            {
+                "bSort" : false,
+                "language": {
+                    "decimal": "",
+                    "emptyTable": "Não há dados disponiveis na tabela",
+                    "info": "Mostrando _START_ de _END_ da(s) _TOTAL_ entradas",
+                    "infoEmpty": "Mostrando 0 de 0 das 0 entradas",
+                    "infoFiltered": "(filtrando para _MAX_ total entradas)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Visualizar _MENU_ linhas",
+                    "loadingRecords": "Carregando...",
+                    "processing": "Processando...",
+                    "search": "Procurar:",
+                    "zeroRecords": "Não há registros encontrados",
+                    "paginate": {
+                        "first": "Primeiro",
+                        "last": "Ultimo",
+                        "next": "Próximo",
+                        "previous": "Anterior"
+                    },
+                    "aria": {
+                        "sortAscending": ": ative para classificar coluna ascendente",
+                        "sortDescending": ": ative para classificar coluna descendente"
+                    }
+                }
+            }
+            );
+
+    });
+</script>
+
+
