@@ -111,7 +111,7 @@ namespace GerenciadorEventos.Controllers
 
                 string htmlText = RenderViewToString("ListaPresenca", viewpdf);
 
-                byte[] buffer = RenderPDF(htmlText);
+                byte[] buffer = RenderPDF(htmlText, true);
 
                 return File(buffer, "application/PDF");
 
@@ -184,7 +184,7 @@ namespace GerenciadorEventos.Controllers
 
                 string htmlText = RenderViewToString("GerarCracha", viewpdf);
 
-                byte[] buffer = RenderPDF(htmlText);
+                byte[] buffer = RenderPDF(htmlText,true);
 
                 return File(buffer, "application/PDF");
             }
@@ -225,9 +225,9 @@ namespace GerenciadorEventos.Controllers
 
                 //return pdf;
 
-                string htmlText = RenderViewToString("GerarCracha", viewpdf);
+                string htmlText = RenderViewToString("GerarCertificado", viewpdf);
 
-                byte[] buffer = RenderPDF(htmlText);
+                byte[] buffer = RenderPDF(htmlText, false);
 
                 return File(buffer, "application/PDF");
             }
@@ -267,9 +267,9 @@ namespace GerenciadorEventos.Controllers
 
                 //return pdf;
 
-                string htmlText = RenderViewToString("GerarCracha", viewpdf);
+                string htmlText = RenderViewToString("GerarCertificado", viewpdf);
 
-                byte[] buffer = RenderPDF(htmlText);
+                byte[] buffer = RenderPDF(htmlText, false);
 
                 return File(buffer, "application/PDF");
             }
@@ -305,7 +305,7 @@ namespace GerenciadorEventos.Controllers
                 //enviar
                 using (MailMessage mail = new MailMessage())
                 {
-                    mail.From = new MailAddress("jhonatanrc13@gmail.com");
+                    mail.From = new MailAddress("gerenciadoreventospuc@gmail.com");
                     foreach (Usuario usuario in lstUsuario)
                     {
                         destinatarios += usuario.email + ";";
@@ -409,7 +409,7 @@ namespace GerenciadorEventos.Controllers
                         smtp.UseDefaultCredentials = false; // vamos utilizar credencias especificas
 
                         // seu usuário e senha para autenticação
-                        smtp.Credentials = new NetworkCredential("jhonatanrc13@gmail.com", "97fy5j2W40nm#@");
+                        smtp.Credentials = new NetworkCredential("gerenciadoreventospuc@gmail.com", "375i4u9E");
 
                         // envia o e-mail
                         smtp.Send(mail);
@@ -497,12 +497,19 @@ namespace GerenciadorEventos.Controllers
             return renderedView.ToString();
         }
 
-        private byte[] RenderPDF(string htmlText)
+        private byte[] RenderPDF(string htmlText, bool margem)
         {
             byte[] renderedBuffer;
 
-            const int HorizontalMargin = 40;
-            const int VerticalMargin = 40;
+            int HorizontalMargin = 0;
+            int VerticalMargin = 0;
+
+            if (margem)
+            {
+                HorizontalMargin = 40;
+                VerticalMargin = 40;
+            }
+            
 
             using (var outputMemoryStream = new MemoryStream())
             {

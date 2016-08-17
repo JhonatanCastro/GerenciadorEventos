@@ -20,52 +20,58 @@
 
 </head>
 <body>
-    @foreach (GerenciadorEventos.Entidades.Usuario usuario in Model.lstUsuario)
-    {
-        <table style="border:1px; margin:10px; width: 300px;">
-            <tr style="height:220px; text-align:center;">
-                <td>
-                    <span style="font-size:25px;font-weight:bold;">@Model.evento.nome</span><br /><br />
-                    <img src="~/Content/imagens/user.png" style="height:40px; width:40px;" />
-                </td>
-            </tr>
-            <tr style="background-color:black; color:white; width:300px; height:150px; text-align:center;">
-                <td>
-                    <span style="font-size:25px;">@usuario.nome</span><br />
-                    <span style="font-size:20px;">
-                        @if (usuario.statusInscricao == "Organizador")
-                        { <span>Organizador</span> }
-                        else
-                        { <span>Palestrante</span> }
-                    </span>
+    <table style="display:inherit;">
+        <tr>
+            <td>
+                @foreach (GerenciadorEventos.Entidades.Usuario usuario in Model.lstUsuario)
+                {
+                    <table style="border:1px; margin:10px; width: 300px;">
+                        <tr style="height:220px; text-align:center;">
+                            <td>
+                                <span style="font-size:25px;font-weight:bold;">@Model.evento.nome</span><br /><br />
+                                <img src="../Content/imagens/user.png" style="height:40px; width:40px;" />
+                            </td>
+                        </tr>
+                        <tr style="background-color:black; color:white; width:300px; height:150px; text-align:center;">
+                            <td>
+                                <span style="font-size:25px;">@usuario.nome</span><br />
+                                <span style="font-size:20px;">
+                                    @if (usuario.statusInscricao == "Organizador")
+                                    { <span>Organizador</span> }
+                                    else
+                                    { <span>Palestrante</span> }
+                                </span>
 
-                </td>
-            </tr>
-            <tr style="font-size:14px; font-weight:bold; height:70px; text-align:center;">
-                <td>
-                    <span>www.gerenciadordeeventosbr.azurewebsites.net</span>
-                </td>
-            </tr>
-        </table>
-        @*<div class="borda" style="margin:10px; text-align:center; height: 500px; width: 350px;">
-            <div style="padding-bottom:40px;padding-top:60px;">
-                <span style="font-size:25px;font-weight:bold;">@Model.evento.nome</span><br /><br />
-                <span class="glyphicon glyphicon-user" style="font-size:170px;"></span>
-            </div>
-            <div style="background-color:black; color:white;text-align:center;">
-                <span style="font-size:25px;">@usuario.nome</span><br />
-                <span style="font-size:20px;">
-                    @if (usuario.statusInscricao == "Organizador")
-                    { <span>Organizador</span> }
-                    else
-                    { <span>Palestrante</span> }
-                </span>
-            </div>
-            <div style="padding-top: 30px; padding-left: 58px; font-weight:bold; position:absolute;">
-                <span>www.gerenciadordeeventosbr.azurewebsites.net</span>
-            </div>
-        </div>*@
-    }
+                            </td>
+                        </tr>
+                        <tr style="font-size:14px; font-weight:bold; height:70px; text-align:center;">
+                            <td>
+                                <span>www.gerenciadordeeventosbr.azurewebsites.net</span>
+                            </td>
+                        </tr>
+                    </table>
+                    @*<div class="borda" style="margin:10px; text-align:center; height: 500px; width: 350px;">
+                            <div style="padding-bottom:40px;padding-top:60px;">
+                                <span style="font-size:25px;font-weight:bold;">@Model.evento.nome</span><br /><br />
+                                <span class="glyphicon glyphicon-user" style="font-size:170px;"></span>
+                            </div>
+                            <div style="background-color:black; color:white;text-align:center;">
+                                <span style="font-size:25px;">@usuario.nome</span><br />
+                                <span style="font-size:20px;">
+                                    @if (usuario.statusInscricao == "Organizador")
+                                    { <span>Organizador</span> }
+                                    else
+                                    { <span>Palestrante</span> }
+                                </span>
+                            </div>
+                            <div style="padding-top: 30px; padding-left: 58px; font-weight:bold; position:absolute;">
+                                <span>www.gerenciadordeeventosbr.azurewebsites.net</span>
+                            </div>
+                        </div>*@
+                }
+            </td>
+        </tr>
+    </table>
 </body>
 </html>
 
