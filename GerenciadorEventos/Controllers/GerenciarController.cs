@@ -3,6 +3,7 @@ using GerenciadorEventos.Repositorio;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using iTextSharp.tool.xml;
+using iTextSharp.tool.xml.html;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -111,7 +112,7 @@ namespace GerenciadorEventos.Controllers
 
                 string htmlText = RenderViewToString("ListaPresenca", viewpdf);
 
-                byte[] buffer = RenderPDF(htmlText, true);
+                byte[] buffer = RenderPDF(htmlText, true, false);
 
                 return File(buffer, "application/PDF");
 
@@ -184,7 +185,7 @@ namespace GerenciadorEventos.Controllers
 
                 string htmlText = RenderViewToString("GerarCracha", viewpdf);
 
-                byte[] buffer = RenderPDF(htmlText,true);
+                byte[] buffer = RenderPDF(htmlText,true, false);
 
                 return File(buffer, "application/PDF");
             }
@@ -227,7 +228,7 @@ namespace GerenciadorEventos.Controllers
 
                 string htmlText = RenderViewToString("GerarCertificado", viewpdf);
 
-                byte[] buffer = RenderPDF(htmlText, false);
+                byte[] buffer = RenderPDF(htmlText, false, true);
 
                 return File(buffer, "application/PDF");
             }
@@ -269,7 +270,7 @@ namespace GerenciadorEventos.Controllers
 
                 string htmlText = RenderViewToString("GerarCertificado", viewpdf);
 
-                byte[] buffer = RenderPDF(htmlText, false);
+                byte[] buffer = RenderPDF(htmlText, false, true);
 
                 return File(buffer, "application/PDF");
             }
@@ -497,7 +498,7 @@ namespace GerenciadorEventos.Controllers
             return renderedView.ToString();
         }
 
-        private byte[] RenderPDF(string htmlText, bool margem)
+        private byte[] RenderPDF(string htmlText, bool margem, bool landscape)
         {
             byte[] renderedBuffer;
 
@@ -513,17 +514,37 @@ namespace GerenciadorEventos.Controllers
 
             using (var outputMemoryStream = new MemoryStream())
             {
-                using (var pdfDocument = new Document(PageSize.A4, HorizontalMargin, HorizontalMargin, VerticalMargin, VerticalMargin))
+                if (landscape)
                 {
-                    iTextSharp.text.pdf.PdfWriter pdfWriter = PdfWriter.GetInstance(pdfDocument, outputMemoryStream);
-                    pdfWriter.CloseStream = false;
-
-                    pdfDocument.Open();
-                    using (var htmlViewReader = new StringReader(htmlText))
+                    using (var pdfDocument = new Document(new RectangleReadOnly(842, 595), HorizontalMargin, HorizontalMargin, VerticalMargin, VerticalMargin))
                     {
-                        XMLWorkerHelper.GetInstance().ParseXHtml(pdfWriter, pdfDocument, htmlViewReader);
-                    }
+                        iTextSharp.text.pdf.PdfWriter pdfWriter = PdfWriter.GetInstance(pdfDocument, outputMemoryStream);
+                        pdfWriter.CloseStream = false;
 
+                        pdfDocument.Open();
+
+                        using (var htmlViewReader = new StringReader(htmlText))
+                        {
+                            XMLWorkerHelper.GetInstance().ParseXHtml(pdfWriter, pdfDocument, htmlViewReader);
+                        }
+
+                    }
+                }
+                else
+                {
+                    using (var pdfDocument = new Document(PageSize.A4, HorizontalMargin, HorizontalMargin, VerticalMargin, VerticalMargin))
+                    {
+                        iTextSharp.text.pdf.PdfWriter pdfWriter = PdfWriter.GetInstance(pdfDocument, outputMemoryStream);
+                        pdfWriter.CloseStream = false;
+
+                        pdfDocument.Open();
+
+                        using (var htmlViewReader = new StringReader(htmlText))
+                        {
+                            XMLWorkerHelper.GetInstance().ParseXHtml(pdfWriter, pdfDocument, htmlViewReader);
+                        }
+
+                    }
                 }
 
                 renderedBuffer = new byte[outputMemoryStream.Position];
@@ -548,4 +569,34 @@ namespace GerenciadorEventos.Controllers
         #endregion
     }
 
+    public class CustomImageTagProcessor : iTextSharp.tool.xml.html.Image
+    {
+        public override IList<IElement> End(IWorkerContext ctx, Tag tag, IList<IElement> currentContent)
+        {
+            IDictionary<string, string> attributes = tag.Attributes;
+            string src;
+            if (!attributes.TryGetValue(HTML.Attribute.SRC, out src))
+                return new List<IElement>(1);
+
+            if (string.IsNullOrEmpty(src))
+                return new List<IElement>(1);
+
+            if (src.StartsWith("data:image/", StringComparison.InvariantCultureIgnoreCase))
+            {
+                // data:[<MIME-type>][;charset=<encoding>][;base64],<data>
+                var base64Data = src.Substring(src.IndexOf(",") + 1);
+                var imagedata = Convert.FromBase64String(base64Data);
+                var image = iTextSharp.text.Image.GetInstance(imagedata);
+
+                var list = new List<IElement>();
+                var htmlPipelineContext = GetHtmlPipelineContext(ctx);
+                list.Add(GetCssAppliers().Apply(new Chunk((iTextSharp.text.Image)GetCssAppliers().Apply(image, tag, htmlPipelineContext), 0, 0, true), tag, htmlPipelineContext));
+                return list;
+            }
+            else
+            {
+                return base.End(ctx, tag, currentContent);
+            }
+        }
+    }
 }

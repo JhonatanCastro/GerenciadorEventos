@@ -1,14 +1,14 @@
-﻿@model List<GerenciadorEventos.Entidades.Usuario>
+﻿@model GerenciadorEventos.Entidades.ViewToPdf
 @{
     Layout = "";
-    GerenciadorEventos.Entidades.Evento evento = (GerenciadorEventos.Entidades.Evento)ViewBag.Evento;
+    //GerenciadorEventos.Entidades.Evento evento = (GerenciadorEventos.Entidades.Evento)ViewBag.Evento;
 }
 
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @*<meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">*@
     <title>Gerenciador de Eventos</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
@@ -19,48 +19,90 @@
     @Scripts.Render("~/bundles/script")
 
 </head>
-<body style="padding:0px;margin:0px;">
-        @foreach (GerenciadorEventos.Entidades.Usuario usuario in Model)
+<body>
+        @if (Model.lstUsuario.Count > 0)
         {
-            <div class="row" style="padding:0px;margin:0px;">
-                <div class="col-xs-12" style="padding:0px;margin:0px;">
-                    <div style="width:2000px;height:1413px; border:1px solid black;">
-                        <div style="background-color:black;padding-top:120px; padding-bottom:100px;text-align:center;">
-                            <span style="font-size:100px; color:white;">GERENCIADOR DE EVENTOS</span>
-                        </div>
-                        <div>
-                            <p style="font-size:100px;font-family: cursive; text-align:center; margin-top:10px;">Certificado de Participação</p>
-                            <br/>
-                            <p style="font-size:50px; text-align:center;">Certificamos que</p>
-                            <p style="font-size:60px; text-align:center; font-weight:bold;">@usuario.nome</p>
-                            @if (evento.palestrante.Where(m => m.codigo == usuario.codigo).ToList().Count > 0)
+            foreach (GerenciadorEventos.Entidades.Usuario usuario in Model.lstUsuario)
+            {
+                <table style="margin:0px; border:1px; width:100%" width='100%'>
+                    <tr style="background-color:black; text-align:center;">
+                        <td>
+                            <br />
+                            <p style="font-size:60px; color:white;">GERENCIADOR DE EVENTOS</p>
+                            <br />
+                        </td>
+                    </tr>
+                    <tr style="text-align:center;">
+                        <td>
+                            <span style="font-size:50px;font-family: cursive; text-align:center; margin-top:10px;">Certificado de Participação</span>
+                            <p style="font-size:32px; text-align:center;">Certificamos que</p>
+                            <p style="font-size:35px; text-align:center; font-weight:bold;">@usuario.nome</p>
+                            @if (Model.evento.palestrante.Where(m => m.codigo == usuario.codigo).ToList().Count > 0)
                             {
-                                <p style="font-size:50px; text-align:center;">ministrou o evento</p>
+                                <p style="font-size:32px; text-align:center;">ministrou o evento</p>
                             }
                             else
                             {
-                                <p style="font-size:50px; text-align:center;">participou do evento</p>
+                                <p style="font-size:32px; text-align:center;">participou do evento</p>
                             }
-                            <p style="font-size:60px; text-align:center; font-weight:bold;">@evento.nome.</p>
-                            <br/>
-                            <br/>
-                            <p style="font-size:30px; text-align:center;"><span style="font-weight:bold;">Data do evento: </span>@string.Format("{0:f}", evento.dataHoraInicio) à @string.Format("{0:f}", evento.dataHoraFim)</p>
-                            <br/>
-                            <br/>
+                            <p style="font-size:35px; text-align:center; font-weight:bold;">@Model.evento.nome.</p>
                             <br />
+                            <p style="font-size:20px; text-align:center;"><span style="font-weight:bold;">Data do evento: </span>@string.Format("{0:f}", Model.evento.dataHoraInicio) à @string.Format("{0:f}", Model.evento.dataHoraFim)</p>
                             <br />
-                            <br />
-                            <p style="font-size:40px; text-align:center; font-weight:bold;">@evento.organizador.nome</p>
-                            <p style="font-size:30px; text-align:center;">Organizador(a) do evento</p>
+                            <span style="font-size:28px; text-align:center; font-weight:bold;">@Model.evento.organizador.nome</span>
                             <br/>
-                            <br/>
+                            <p style="font-size:20px; text-align:center;">Organizador(a) do evento</p>
                             <br />
-                            <p style="font-size:30px; text-align:center;">Certificado autêntico do site www.gerenciadoreventos.com.br</p>
+                        </td>
+                    </tr>
+                    <tr style="background-color:black;text-align:center; margin:10px;">
+                        <td><p style="font-size:20px; margin-top:10px; color:white;">Certificado autêntico do site www.gerenciadordeeventosbr.azurewebsites.net</p></td>
+                    </tr>
+                </table>
+                @*<div class="row" style="padding:0px;margin:0px;">
+                    <div class="col-xs-12" style="padding:0px;margin:0px;">
+                        <div style="width:2000px;height:1413px; border:1px solid black;">
+                            <div style="background-color:black;padding-top:120px; padding-bottom:100px;text-align:center;">
+                                <span style="font-size:100px; color:white;">GERENCIADOR DE EVENTOS</span>
+                            </div>
+                            <div>
+                                <p style="font-size:100px;font-family: cursive; text-align:center; margin-top:10px;">Certificado de Participação</p>
+                                <br />
+                                <p style="font-size:50px; text-align:center;">Certificamos que</p>
+                                <p style="font-size:60px; text-align:center; font-weight:bold;">@usuario.nome</p>
+                                @if (Model.evento.palestrante.Where(m => m.codigo == usuario.codigo).ToList().Count > 0)
+                                {
+                                    <p style="font-size:50px; text-align:center;">ministrou o evento</p>
+                                }
+                                else
+                                {
+                                    <p style="font-size:50px; text-align:center;">participou do evento</p>
+                                }
+                                <p style="font-size:60px; text-align:center; font-weight:bold;">@Model.evento.nome.</p>
+                                <br />
+                                <br />
+                                <p style="font-size:30px; text-align:center;"><span style="font-weight:bold;">Data do evento: </span>@string.Format("{0:f}", Model.evento.dataHoraInicio) à @string.Format("{0:f}", Model.evento.dataHoraFim)</p>
+                                <br />
+                                <br />
+                                <br />
+                                <br />
+                                <br />
+                                <p style="font-size:40px; text-align:center; font-weight:bold;">@Model.evento.organizador.nome</p>
+                                <p style="font-size:30px; text-align:center;">Organizador(a) do evento</p>
+                                <br />
+                                <br />
+                                <br />
+                                <p style="font-size:30px; text-align:center;">Certificado autêntico do site www.gerenciadoreventos.com.br</p>
+                            </div>
+                            <div style="background-color:black;padding-top:50px; padding-bottom:43px;text-align:center;"></div>
                         </div>
-                        <div style="background-color:black;padding-top:50px; padding-bottom:43px;text-align:center;"></div>
                     </div>
-                </div>
-            </div>
+                </div>*@
+            }
+        }
+        else
+        {
+            <span>Não há dados</span>
         }
 </body>
 </html>
